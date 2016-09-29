@@ -1,0 +1,42 @@
+{
+  "name": "react-native-image-carousel",
+  "version": "0.0.1",
+  "description": "Image carousel. Support for fullscreen mode, image swiping in fullscreen mode, pinch-to-zoom.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "image",
+    "carousel",
+    "fullscreen",
+    "lightbox",
+    "gallery",
+    "swipe",
+    "slide"
+  ],
+  "author": "Binur Konarbai",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.16.1",
+    "react-swipeable-views": "^0.7.6"
+  },
+  "peerDependencies": {
+    "react": "^15.3.2",
+    "react-native": "^0.33.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.4.0",
+    "eslint-config-airbnb-base": "^7.1.0",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flowtype": "^2.19.0",
+    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-lodash-fp": "^2.0.1",
+    "eslint-plugin-no-use-extend-native": "^0.3.8",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-react": "^6.3.0",
+    "eslint-plugin-react-native": "^2.0.0"
+  }
+}

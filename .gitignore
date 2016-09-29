@@ -1,0 +1,11 @@
+# OSX
+.DS_Store
+
+# VSCode
+.vscode/launchReactNative.js
+.vscode/.react/
+typings/
+
+# node.js
+node_modules/
+npm-debug.log
