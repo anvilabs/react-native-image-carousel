@@ -1,11 +1,11 @@
 # react-native-image-carousel
-Image carousel with support for heading, captions, fullscreen mode, image swiping and pinch-to-zoom in fullscreen mode.
+> Image carousel with support for heading, captions, fullscreen mode, image swiping and pinch-to-zoom in fullscreen mode.
 
 Currently iOS only.
 
 ## Demo
 
-[demonstration](.github/demo.gif)
+<img alt="Demo" src=".github/demo.gif" width="375">
 
 ## Installation
 
