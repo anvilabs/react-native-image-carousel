@@ -5,7 +5,7 @@ Currently iOS only.
 
 ## Demo
 
-[demonstration](.github/demo.gif)
+<img alt="Demo" src=".github/demo.gif" width="375">
 
 ## Installation
 
