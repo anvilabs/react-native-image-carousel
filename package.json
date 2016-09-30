@@ -1,7 +1,8 @@
 {
   "name": "react-native-image-carousel",
   "version": "0.0.1",
-  "description": "Image carousel. Support for fullscreen mode, image swiping in fullscreen mode, pinch-to-zoom.",
+  "description": "Image carousel with support for fullscreen mode, image swiping in fullscreen mode, pinch-to-zoom.",
+  "homepage": "https://github.com/anvilabs/react-native-image-carousel",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +17,8 @@
     "swipe",
     "slide"
   ],
-  "author": "Binur Konarbai",
+  "author": "Binur Konarbai <binchik@anvilabs.co>",
+  "repository": "anvilabs/react-native-image-carousel",
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.16.1",
