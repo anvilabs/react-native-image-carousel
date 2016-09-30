@@ -48,4 +48,4 @@ Check full example in _Example_ folder.
 
 ## License
 
-[MIT License](./LICENSE) © Binur Konarbai 
+[MIT License](./LICENSE) © Anvilabs LLC 
