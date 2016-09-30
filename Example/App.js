@@ -6,17 +6,6 @@ import { View, StyleSheet } from 'react-native';
 import React from 'react';
 import ImageCarousel from 'react-native-image-carousel';
 
-// export type Slide = {
-//   imageUrl: string,
-//   imageHeight: number,
-//   caption: ?string,
-// };
-//   style: ?number | ?Object,
-//   headingStyle: ?number | ?Object,
-//   captionStyle: ?number | ?Object,
-//   slides: Array<Slide>,
-//   heading: ?string,
-
 const slides = [
   {
     imageUrl: 'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/66807.max-620x600.jpg',
