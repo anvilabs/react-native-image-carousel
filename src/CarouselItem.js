@@ -12,7 +12,7 @@ import {
 import _ from 'lodash/fp';
 import React, { Component, PropTypes } from 'react';
 
-import type { Slide } from './CarouselView';
+import type { Slide } from './index';
 
 type Props = {
   slide: Slide,
@@ -90,7 +90,7 @@ export default class CarouselItem extends Component<any, Props, State> {
         {slide.caption &&
           <Text
             numberOfLines={0}
-            style={[styles.captionText, captionStyle]}
+            style={[styles.captionText, captionStyle, { width: this.state.imageWidth }]}
           >
             {slide.caption}
           </Text>
