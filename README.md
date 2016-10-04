@@ -44,7 +44,6 @@ Check full example in _Example_ folder.
 - [ ] Add prop to render custom component header.
 - [ ] Add prop to render custom component footer.
 - [ ] Make Slide's `imageHeight` optional.
-- [ ] Caption should be of image's width.
 
 ## License
 
