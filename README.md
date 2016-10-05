@@ -16,34 +16,85 @@ Currently iOS only.
 ```javascript
 import ImageCarousel from 'react-native-image-carousel';
 
-const App = () => (
-  <View style={styles.container}>
-    <ImageCarousel
-      heading={'Stills'}
-      headingStyle={styles.heading}
-      captionStyle={styles.caption}
-      slides={slides}
-    />
-  </View>
-);
+export default class App extends Component<any, any, any> {
+  _imageCarousel: ImageCarousel;
+
+  componentWillMount() {
+    (this: any)._renderHeader = this._renderHeader.bind(this);
+  }
+
+  _renderHeader(): ReactElement<any> {
+    return (
+      <TouchableWithoutFeedback onPress={this._imageCarousel.close}>
+        <View>
+          <Text style={styles.closeText}>Exit</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  _renderFooter(): ReactElement<any> {
+    return (
+      <Text style={styles.footerText}>Footer!</Text>
+    );
+  }
+
+  _renderContent(idx: number): ReactElement<any> {
+    return (
+      <Image
+        style={styles.container}
+        source={{ uri: urls[idx] }}
+        resizeMode={'contain'}
+      />
+    );
+  }
+
+  render(): ReactElement<any> {
+    return (
+      <View style={styles.container}>
+        <ImageCarousel
+          ref={(imageCarousel: ImageCarousel) => {
+            this._imageCarousel = imageCarousel;
+          }}
+          renderContent={this._renderContent}
+          renderHeader={this._renderHeader}
+          renderFooter={this._renderFooter}
+        >
+          {urls.map((url: string): ReactElement<any> => (
+            <Image
+              key={url}
+              style={styles.image}
+              source={{ uri: url, height: 100 }}
+              resizeMode={'contain'}
+            />
+          ))}
+        </ImageCarousel>
+      </View>
+    );
+  }
+}
 ```
 
 Check full example in _Example_ folder.
 
-### Props
+### Props and methods
+
+_Every prop is optional._
 
 | Name | Type | Description |
 |---|---|---|
-| `slides` | `[{ imageUrl: string, imageHeight: number, caption: ?string }]` | Array of slides to show in carousel. `imageHeight` is individual slide component's height, `caption` is optional text under the image. |   
-| `heading` | `?string` | Optional non-scrollable heading text to show above the carousel. |
-| `headingStyle` | `Text.style` | Style to apply to the carousel heading text. |
-| `captionStyle` | `Text.style` | Style to apply to every caption text. |
+| `activeProps?` | `Object` | Props of each child when in fullscreen mode. (For a component to fill the screen activeProp's style must be `flex: 1`). This prop is ignored in case `renderContent` prop is provided. |   
+| `zoomEnabled?` | `boolean` | `true` by default, if `false`, children are not zoomable. |
+| `hideStatusBarOnOpen?` | `boolean` | `true` by default, if `false`, status bar does not fade out on open. |
+| `renderContent?` | `(idx: number) => ReactElement<any>` | Component to render in fullscreen mode for the given index. |
+| `renderHeader?` | `() => ReactElement<any>` | Component to render at the top when in fullscreen mode. |
+| `renderFooter?` | `() => ReactElement<any>` | Component to render at the bottom when in fullscreen mode. |
+| `onOpen?` | `() => void` | Fired on fullscreen mode open. |
+| `onClose?` | `() => void` | Fired on fullscreen mode close. |
 
-## TODO
+react-native-image-carousel also provides two methods for opening and closing the fullscreen mode respectively:
 
-- [ ] Add prop to render custom component header.
-- [ ] Add prop to render custom component footer.
-- [ ] Make Slide's `imageHeight` optional.
+`open(startIdx: number)`, `close`.
 
 ## License
 
