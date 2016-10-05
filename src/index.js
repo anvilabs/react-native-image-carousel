@@ -5,7 +5,6 @@
 import {
   Animated,
   Dimensions,
-  Image,
   Modal,
   PanResponder,
   ScrollView,
@@ -19,24 +18,19 @@ import _ from 'lodash/fp';
 import React, { Component, PropTypes } from 'react';
 import SwipeableViews from 'react-swipeable-views/lib/index.native.scroll';
 
-import CarouselItem from './CarouselItem';
-
 const ANIM_CONFIG = { duration: 300 };
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-export type Slide = {
-  imageUrl: string,
-  imageHeight: number,
-  caption: ?string,
-};
-
 type Props = {
-  style: ?number | ?Object,
-  headingStyle: ?number | ?Object,
-  captionStyle: ?number | ?Object,
-  slides: Array<Slide>,
-  heading: ?string,
-};
+  activeProps?: Object,
+  zoomEnabled?: boolean,
+  hideStatusBarOnOpen?: boolean,
+  renderHeader: () => ReactElement<any>,
+  renderFooter: () => ReactElement<any>,
+  renderContent?: (idx: number) => ReactElement<any>,
+  onOpen?: () => void,
+  onClose?: () => void,
+} & View.props;
 type State = {
   origin: {
     x: number,
@@ -63,17 +57,23 @@ export default class ImageCarousel extends Component<any, Props, State> {
   props: Props;
   state: State;
   panResponder: PanResponder;
-  carouselItems: Array<CarouselItem>;
+  carouselItems: [View];
 
   static propTypes = {
-    slides: PropTypes.arrayOf(PropTypes.object).isRequired,
-    heading: PropTypes.string,
-    style: View.propTypes.style,
-    headingStyle: Text.propTypes.style,
-    captionStyle: Text.propTypes.style,
+    activeProps: PropTypes.object,
+    zoomEnabled: PropTypes.bool,
+    hideStatusBarOnOpen: PropTypes.bool,
+    renderContent: PropTypes.func,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
+    ...View.propTypes,
+  };
+  static defaultProps = {
+    zoomEnabled: true,
+    hideStatusBarOnOpen: true,
   };
 
-  constructor(props: Props) {
+  constructor(props: View.props) {
     super(props);
 
     this.state = {
@@ -98,15 +98,13 @@ export default class ImageCarousel extends Component<any, Props, State> {
       slidesDown: false,
     };
 
-    this.carouselItems = _.map(null)(props.slides);
+    this.carouselItems = _.map(null)(props.children);
   }
 
   componentWillMount() {
     (this: any)._handlePanEnd = this._handlePanEnd.bind(this);
-    (this: any)._handleCaroselItemPress =
-      this._handleCaroselItemPress.bind(this);
-    (this: any)._handleGalleryClosePress =
-      this._handleGalleryClosePress.bind(this);
+    (this: any).open = this.open.bind(this);
+    (this: any).close = this.close.bind(this);
     (this: any)._getSwipeableStyle = this._getSwipeableStyle.bind(this);
     (this: any)._renderFullscreen = this._renderFullscreen.bind(this);
 
@@ -129,63 +127,43 @@ export default class ImageCarousel extends Component<any, Props, State> {
     });
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
-    if (nextState.fullscreen || this.state.fullscreen) {
-      return !_.eq(nextState.origin, this.state.origin)
-        || !_.eq(nextState.target, this.state.target)
-        || nextState.panning !== this.state.panning
-        || nextState.animating !== this.state.animating
-        || nextState.selectedImageHidden !== this.state.selectedImageHidden
-        || nextState.selectedIdx !== this.state.selectedIdx;
-    }
-
-    return nextProps.headingStyle !== this.props.headingStyle;
+  shouldComponentUpdate(nextProps: View.props, nextState: State): boolean {
+    return (nextState.fullscreen || this.state.fullscreen) &&
+      (!_.eq(nextState.origin, this.state.origin)
+      || !_.eq(nextState.target, this.state.target)
+      || nextState.panning !== this.state.panning
+      || nextState.animating !== this.state.animating
+      || nextState.selectedImageHidden !== this.state.selectedImageHidden
+      || nextState.selectedIdx !== this.state.selectedIdx);
   }
 
-  _handlePanEnd(evt: Object, gestureState: Object) {
-    if (Math.abs(gestureState.dy) > 150) {
-      this.setState({
-        panning: false,
-        target: {
-          x: gestureState.dx,
-          y: gestureState.dy,
-          opacity: 1 - Math.abs(gestureState.dy / screenHeight),
-        },
-      });
-
-      this._handleGalleryClosePress();
-    } else {
-      Animated.timing(
-        this.state.pan,
-        { toValue: 0, ...ANIM_CONFIG },
-      ).start(() => this.setState({ panning: false }));
-    }
-  }
-
-  _handleCaroselItemPress(selectedIdx: number) {
-    StatusBar.setHidden(true, 'fade');
+  open(startIdx: number) {
+    this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
 
     this.setState({ fullscreen: true });
 
-    this.carouselItems[selectedIdx].measure((
+    this.carouselItems[startIdx].measure((
       rx: number, ry: number,
       width: number, height: number,
       x: number, y: number,
     ) => {
       this.setState({
-        selectedIdx,
+        selectedIdx: startIdx,
         animating: true,
         origin: { x, y, width, height },
         target: { x: 0, y: 0, opacity: 1 },
       });
       Animated.timing(this.state.openAnim,
         { ...ANIM_CONFIG, toValue: 1 },
-      ).start(() => this.setState({ animating: false }));
+      ).start(() => {
+        this.setState({ animating: false });
+        this.props.onOpen && this.props.onOpen();
+      });
     });
   }
 
-  _handleGalleryClosePress() {
-    StatusBar.setHidden(false, 'fade');
+  close() {
+    this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
 
     this.setState({ animating: true });
 
@@ -201,14 +179,36 @@ export default class ImageCarousel extends Component<any, Props, State> {
       Animated.timing(
         this.state.openAnim,
         { ...ANIM_CONFIG, toValue: 0 },
-      ).start(() =>
+      ).start(() => {
         this.setState({
           animating: false,
           fullscreen: false,
           selectedImageHidden: false,
           slidesDown: false,
-        }));
+        });
+        this.props.onClose && this.props.onClose();
+      });
     });
+  }
+
+  _handlePanEnd(evt: Object, gestureState: Object) {
+    if (Math.abs(gestureState.dy) > 150) {
+      this.setState({
+        panning: false,
+        target: {
+          x: gestureState.dx,
+          y: gestureState.dy,
+          opacity: 1 - Math.abs(gestureState.dy / screenHeight),
+        },
+      });
+
+      this.close();
+    } else {
+      Animated.timing(
+        this.state.pan,
+        { toValue: 0, ...ANIM_CONFIG },
+      ).start(() => this.setState({ panning: false }));
+    }
   }
 
   _getSwipeableStyle(idx: number): Object {
@@ -255,7 +255,6 @@ export default class ImageCarousel extends Component<any, Props, State> {
       animating,
       fullscreen,
       openAnim,
-      origin,
       pan,
       panning,
       selectedIdx,
@@ -263,6 +262,8 @@ export default class ImageCarousel extends Component<any, Props, State> {
       target,
     } = this.state;
 
+    const header = this.props.renderHeader && this.props.renderHeader();
+    const footer = this.props.renderFooter && this.props.renderFooter();
     const opacity = {
       opacity: panning
         ? pan.interpolate({
@@ -296,13 +297,16 @@ export default class ImageCarousel extends Component<any, Props, State> {
           }}
           scrollEnabled={!animating && !panning}
         >
-          {
-            _
-              .map
-              .convert({ cap: false })(
-                (slide: Slide, idx: number): ReactElement<any> =>
+          {_
+            .map
+            .convert({ cap: false })(
+              (child: ReactElement<any>, idx: number): ReactElement<any> => {
+                const content =
+                  this.props.renderContent && this.props.renderContent(idx);
+
+                return (
                   <Animated.View
-                    key={`${slide.imageUrl}${idx}`}
+                    key={idx}
                     style={[
                       this._getSwipeableStyle(idx),
                       (selectedIdx === idx && panning) &&
@@ -312,71 +316,80 @@ export default class ImageCarousel extends Component<any, Props, State> {
                     <ScrollView
                       style={{ flex: 1 }}
                       contentContainerStyle={{ flex: 1 }}
-                      maximumZoomScale={2}
+                      maximumZoomScale={this.props.zoomEnabled ? 2 : 1}
                       alwaysBounceVertical={false}
                     >
-                      <Image
-                        style={{ flex: 1 }}
-                        source={{ uri: slide.imageUrl, height: origin.height }}
-                        resizeMode="contain"
-                        {...this.panResponder.panHandlers}
-                      />
+                      {content
+                        ? React.cloneElement(content, {
+                          ...this.panResponder.panHandlers,
+                        })
+                        : React.cloneElement(child, {
+                          ...child.props,
+                          ...this.props.activeProps,
+                          ...this.panResponder.panHandlers,
+                        })
+                      }
                     </ScrollView>
-                  </Animated.View>,
-              )(this.props.slides)
+                  </Animated.View>
+                );
+              },
+            )(this.props.children)
           }
         </SwipeableViews>
-        <TouchableWithoutFeedback
-          style={styles.closeButton}
-          onPress={this._handleGalleryClosePress}
-        >
-          <Animated.View style={opacity}>
-            <Text style={styles.closeText}>Close</Text>
-          </Animated.View>
-        </TouchableWithoutFeedback>
+        <Animated.View style={opacity}>
+          {header
+            ? React.cloneElement(header, {
+              ...header.props,
+              style: [...header.props.style, styles.header],
+            })
+            : (
+            <TouchableWithoutFeedback
+              style={styles.header}
+              onPress={this.close}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableWithoutFeedback>
+            )
+          }
+          {footer && React.cloneElement(footer, {
+            ...footer.props,
+            style: [...footer.props.style, styles.footer],
+          })}
+        </Animated.View>
       </Modal>
     );
   }
 
   render(): ReactElement<any> {
-    const { style, headingStyle, captionStyle, heading, slides } = this.props;
-
     return (
-      <View style={style}>
-        {heading && <Text style={headingStyle}>{heading}</Text>}
+      <View style={this.props.style}>
         <ScrollView
           horizontal
           scrollEnabled={!this.state.animating}
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
         >
-          {
-            _
-              .map
-              .convert({ cap: false })(
-                (slide: Slide, idx: number): ReactElement<any> => {
-                  const opacity = {
+          {_.map.convert({ cap: false })(
+            (child: ReactElement<any>, idx: number) => (
+              <TouchableWithoutFeedback
+                key={idx}
+                onPress={() => { this.open(idx); }}
+              >
+                <View
+                  ref={(carouselItem: View) => {
+                    this.carouselItems[idx] = carouselItem;
+                  }}
+                  style={{
                     opacity: this.state.selectedImageHidden
                       && this.state.selectedIdx === idx ? 0 : 1,
-                  };
-
-                  return (
-                    <CarouselItem
-                      key={`${slide.imageUrl}${idx}`}
-                      ref={(carouselItem: CarouselItem) => {
-                        this.carouselItems[idx] = carouselItem;
-                      }}
-                      style={opacity}
-                      slide={slide}
-                      captionStyle={captionStyle}
-                      onPress={() => this._handleCaroselItemPress(idx)}
-                    />
-                  );
-                },
-              )(slides)
-          }
+                  }}
+                >
+                  {child}
+                </View>
+              </TouchableWithoutFeedback>
+          ))(this.props.children)}
         </ScrollView>
-        {this._renderFullscreen()}
+        {this.state.fullscreen && this._renderFullscreen()}
       </View>
     );
   }
@@ -387,10 +400,17 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'black',
   },
-  closeButton: {
+  header: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   closeText: {
     color: 'white',
