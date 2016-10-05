@@ -92,7 +92,7 @@ _Every prop is optional._
 | `onOpen?` | `() => void` | Fired on fullscreen mode open. |
 | `onClose?` | `() => void` | Fired on fullscreen mode close. |
 
-react-native-image-carousel also provides two methods for opening and closing the fullscreen mode appropriately:
+react-native-image-carousel also provides two methods for opening and closing the fullscreen mode respectively:
 
 `open(startIdx: number)`, `close`.
 
