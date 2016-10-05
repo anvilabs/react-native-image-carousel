@@ -289,6 +289,26 @@ export default class ImageCarousel extends Component<any, Props, State> {
         }}
       >
         <Animated.View style={[styles.modalBackground, opacity]} />
+        <Animated.View style={[opacity, styles.headerFooterContainer]}>
+          {header
+            ? React.cloneElement(header, {
+              ...header.props,
+              style: [header.props.style, styles.header],
+            })
+            : (
+            <TouchableWithoutFeedback
+              style={styles.header}
+              onPress={this.close}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableWithoutFeedback>
+            )
+          }
+          {footer && React.cloneElement(footer, {
+            ...footer.props,
+            style: [footer.props.style, styles.footer],
+          })}
+        </Animated.View>
         <SwipeableViews
           style={StyleSheet.absoluteFill}
           index={selectedIdx}
@@ -336,26 +356,6 @@ export default class ImageCarousel extends Component<any, Props, State> {
             )(this.props.children)
           }
         </SwipeableViews>
-        <Animated.View style={opacity}>
-          {header
-            ? React.cloneElement(header, {
-              ...header.props,
-              style: [...header.props.style, styles.header],
-            })
-            : (
-            <TouchableWithoutFeedback
-              style={styles.header}
-              onPress={this.close}
-            >
-              <Text style={styles.closeText}>Close</Text>
-            </TouchableWithoutFeedback>
-            )
-          }
-          {footer && React.cloneElement(footer, {
-            ...footer.props,
-            style: [...footer.props.style, styles.footer],
-          })}
-        </Animated.View>
       </Modal>
     );
   }
@@ -405,6 +405,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+  },
+  headerFooterContainer: {
+    ...StyleSheet.absoluteFillObject,
   },
   footer: {
     position: 'absolute',
