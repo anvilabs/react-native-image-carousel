@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-carousel",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Image carousel with support for fullscreen mode, image swiping in fullscreen mode, pinch-to-zoom.",
   "homepage": "https://github.com/anvilabs/react-native-image-carousel",
   "main": "src/index.js",
