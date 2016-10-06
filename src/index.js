@@ -23,8 +23,8 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 type Props = {
   activeProps?: Object,
-  zoomEnabled?: boolean,
   activeComponents?: [ReactElement<any>],
+  zoomEnabled?: boolean,
   hideStatusBarOnOpen?: boolean,
   renderHeader?: () => ReactElement<any>,
   renderFooter?: () => ReactElement<any>,
@@ -100,7 +100,9 @@ export default class ImageCarousel extends Component<any, Props, State> {
       slidesDown: false,
     };
 
-    this.carouselItems = _.map(null)(props.children);
+    this.carouselItems = _.isArray(props.children)
+      ? _.map(null)(props.children)
+      : [null];
   }
 
   componentWillMount() {
@@ -341,7 +343,9 @@ export default class ImageCarousel extends Component<any, Props, State> {
                   </Animated.View>
                 );
               },
-            )(this.props.children)
+            )(_.isArray(this.props.children)
+              ? this.props.children : [this.props.children]
+            )
           }
         </SwipeableViews>
         <Animated.View style={[opacity, styles.headerContainer]}>
@@ -354,7 +358,9 @@ export default class ImageCarousel extends Component<any, Props, State> {
             <TouchableWithoutFeedback
               onPress={this.close}
             >
-              <Text style={styles.closeText}>Close</Text>
+              <View>
+                <Text style={styles.closeText}>Close</Text>
+              </View>
             </TouchableWithoutFeedback>
             )
           }
@@ -395,7 +401,9 @@ export default class ImageCarousel extends Component<any, Props, State> {
                   {child}
                 </View>
               </TouchableWithoutFeedback>
-          ))(this.props.children)}
+          ))(_.isArray(this.props.children)
+            ? this.props.children : [this.props.children]
+          )}
         </ScrollView>
         {this.state.fullscreen && this._renderFullscreen()}
       </View>
