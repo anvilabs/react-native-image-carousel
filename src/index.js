@@ -24,10 +24,12 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 type Props = {
   activeProps?: Object,
   zoomEnabled?: boolean,
+  activeComponents?: [ReactElement<any>],
   hideStatusBarOnOpen?: boolean,
-  renderHeader: () => ReactElement<any>,
-  renderFooter: () => ReactElement<any>,
+  renderHeader?: () => ReactElement<any>,
+  renderFooter?: () => ReactElement<any>,
   renderContent?: (idx: number) => ReactElement<any>,
+  onIdxChange?: (idx: number) => void,
   onOpen?: () => void,
   onClose?: () => void,
 } & View.props;
@@ -138,11 +140,12 @@ export default class ImageCarousel extends Component<any, Props, State> {
   }
 
   open(startIdx: number) {
-    this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
+    const activeComponents = this.props.activeComponents || this.carouselItems;
 
+    this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
     this.setState({ fullscreen: true });
 
-    this.carouselItems[startIdx].measure((
+    activeComponents[startIdx].measure((
       rx: number, ry: number,
       width: number, height: number,
       x: number, y: number,
@@ -153,6 +156,8 @@ export default class ImageCarousel extends Component<any, Props, State> {
         origin: { x, y, width, height },
         target: { x: 0, y: 0, opacity: 1 },
       });
+      this.props.onIdxChange(startIdx);
+
       Animated.timing(this.state.openAnim,
         { ...ANIM_CONFIG, toValue: 1 },
       ).start(() => {
@@ -163,11 +168,12 @@ export default class ImageCarousel extends Component<any, Props, State> {
   }
 
   close() {
-    this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
+    const activeComponents = this.props.activeComponents || this.carouselItems;
 
+    this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
     this.setState({ animating: true });
 
-    this.carouselItems[this.state.selectedIdx].measure((
+    activeComponents[this.state.selectedIdx].measure((
       rx: number, ry: number,
       width: number, height: number,
       x: number, y: number,
@@ -264,6 +270,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
 
     const header = this.props.renderHeader && this.props.renderHeader();
     const footer = this.props.renderFooter && this.props.renderFooter();
+
     const opacity = {
       opacity: panning
         ? pan.interpolate({
@@ -294,6 +301,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
           index={selectedIdx}
           onChangeIndex={(idx: number) => {
             this.setState({ selectedIdx: idx });
+            this.props.onIdxChange(idx);
           }}
           scrollEnabled={!animating && !panning}
         >
@@ -351,12 +359,11 @@ export default class ImageCarousel extends Component<any, Props, State> {
             )
           }
         </Animated.View>
-        <Animated.View style={[opacity, styles.footerContainer]}>
-          {footer && React.cloneElement(footer, {
-            ...footer.props,
-            style: [footer.props.style],
-          })}
-        </Animated.View>
+        {footer &&
+          <Animated.View style={[opacity, styles.footerContainer]}>
+            {footer}
+          </Animated.View>
+        }
       </Modal>
     );
   }
