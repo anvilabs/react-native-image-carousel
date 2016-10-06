@@ -84,11 +84,13 @@ _Every prop is optional._
 | Name | Type | Description |
 |---|---|---|
 | `activeProps?` | `Object` | Props of each child when in fullscreen mode. (For a component to fill the screen activeProp's style must be `flex: 1`). This prop is ignored in case `renderContent` prop is provided. |   
+| `activeComponents?` | `[ReactElement<any>]` | Active components' bounds will be used for opening/closing fullscreen mode animations. If not provided, the  immediate children are used. |
 | `zoomEnabled?` | `boolean` | `true` by default, if `false`, children are not zoomable. |
 | `hideStatusBarOnOpen?` | `boolean` | `true` by default, if `false`, status bar does not fade out on open. |
 | `renderContent?` | `(idx: number) => ReactElement<any>` | Component to render in fullscreen mode for the given index. |
 | `renderHeader?` | `() => ReactElement<any>` | Component to render at the top when in fullscreen mode. |
 | `renderFooter?` | `() => ReactElement<any>` | Component to render at the bottom when in fullscreen mode. |
+| `onIdxChange?` | `(idx: number)` | Fired on index change in fullscreen mode. |
 | `onOpen?` | `() => void` | Fired on fullscreen mode open. |
 | `onClose?` | `() => void` | Fired on fullscreen mode close. |
 
