@@ -156,7 +156,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
         origin: { x, y, width, height },
         target: { x: 0, y: 0, opacity: 1 },
       });
-      this.props.onIdxChange(startIdx);
+      this.props.onIdxChange && this.props.onIdxChange(startIdx);
 
       Animated.timing(this.state.openAnim,
         { ...ANIM_CONFIG, toValue: 1 },
@@ -301,7 +301,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
           index={selectedIdx}
           onChangeIndex={(idx: number) => {
             this.setState({ selectedIdx: idx });
-            this.props.onIdxChange(idx);
+            this.props.onIdxChange && this.props.onIdxChange(idx);
           }}
           scrollEnabled={!animating && !panning}
         >
