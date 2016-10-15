@@ -43,16 +43,6 @@ export default class App extends Component<any, any, any> {
     );
   }
 
-  _renderContent(idx: number): ReactElement<any> {
-    return (
-      <Image
-        style={styles.container}
-        source={{ uri: urls[idx] }}
-        resizeMode={'contain'}
-      />
-    );
-  }
-
   render(): ReactElement<any> {
     return (
       <View style={styles.container}>
@@ -60,14 +50,14 @@ export default class App extends Component<any, any, any> {
           ref={(imageCarousel: ImageCarousel) => {
             this._imageCarousel = imageCarousel;
           }}
-          renderContent={this._renderContent}
+          activeProps={{ style: { flex: 1 } }}
           renderHeader={this._renderHeader}
           renderFooter={this._renderFooter}
         >
           {urls.map((url: string): ReactElement<any> => (
             <Image
               key={url}
-              style={styles.image}
+              style={[styles.image, { opacity: 0.2 }]}
               source={{ uri: url, height: 100 }}
               resizeMode={'contain'}
             />
