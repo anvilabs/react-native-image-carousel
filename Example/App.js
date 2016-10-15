@@ -20,16 +20,21 @@ const urls = [
 ];
 /* eslint-enable max-len */
 
-export default class App extends Component<any, any, any> {
+export default class App extends Component {
   _imageCarousel: ImageCarousel;
 
   componentWillMount() {
     (this: any)._renderHeader = this._renderHeader.bind(this);
+    (this: any)._handleHeaderPress = this._handleHeaderPress.bind(this);
+  }
+
+  _handleHeaderPress() {
+    this._imageCarousel.close();
   }
 
   _renderHeader(): ReactElement<any> {
     return (
-      <TouchableWithoutFeedback onPress={this._imageCarousel.close}>
+      <TouchableWithoutFeedback onPress={this._handleHeaderPress}>
         <View>
           <Text style={styles.closeText}>Exit</Text>
         </View>
@@ -57,7 +62,7 @@ export default class App extends Component<any, any, any> {
           {urls.map((url: string): ReactElement<any> => (
             <Image
               key={url}
-              style={[styles.image, { opacity: 0.2 }]}
+              style={[styles.image]}
               source={{ uri: url, height: 100 }}
               resizeMode={'contain'}
             />
