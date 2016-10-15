@@ -1,6 +1,4 @@
-/**
- * @flow
- */
+/* @flow */
 
 import {
   Animated,
@@ -55,11 +53,11 @@ type State = {
   slidesDown: boolean,
 };
 
-export default class ImageCarousel extends Component<any, Props, State> {
+export default class ImageCarousel extends Component {
   props: Props;
   state: State;
-  panResponder: PanResponder;
-  carouselItems: [View];
+  _panResponder: PanResponder;
+  _carouselItems: [View];
 
   static propTypes = {
     activeProps: PropTypes.object,
@@ -100,7 +98,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
       slidesDown: false,
     };
 
-    this.carouselItems = _.isArray(props.children)
+    this._carouselItems = _.isArray(props.children)
       ? _.map(null)(props.children)
       : [null];
   }
@@ -112,7 +110,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
     (this: any)._getSwipeableStyle = this._getSwipeableStyle.bind(this);
     (this: any)._renderFullscreen = this._renderFullscreen.bind(this);
 
-    this.panResponder = PanResponder.create({
+    this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => !this.state.animating,
       onStartShouldSetPanResponderCapture: () => !this.state.animating,
       onMoveShouldSetPanResponder: () => !this.state.animating,
@@ -142,7 +140,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
   }
 
   open(startIdx: number) {
-    const activeComponents = this.props.activeComponents || this.carouselItems;
+    const activeComponents = this.props.activeComponents || this._carouselItems;
 
     this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
     this.setState({ fullscreen: true });
@@ -170,7 +168,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
   }
 
   close() {
-    const activeComponents = this.props.activeComponents || this.carouselItems;
+    const activeComponents = this.props.activeComponents || this._carouselItems;
 
     this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
     this.setState({ animating: true });
@@ -331,12 +329,12 @@ export default class ImageCarousel extends Component<any, Props, State> {
                     >
                       {content
                         ? React.cloneElement(content, {
-                          ...this.panResponder.panHandlers,
+                          ...this._panResponder.panHandlers,
                         })
                         : React.cloneElement(child, {
                           ...child.props,
                           ...this.props.activeProps,
-                          ...this.panResponder.panHandlers,
+                          ...this._panResponder.panHandlers,
                         })
                       }
                     </ScrollView>
@@ -391,7 +389,7 @@ export default class ImageCarousel extends Component<any, Props, State> {
               >
                 <View
                   ref={(carouselItem: View) => {
-                    this.carouselItems[idx] = carouselItem;
+                    this._carouselItems[idx] = carouselItem;
                   }}
                   style={{
                     opacity: this.state.selectedImageHidden
