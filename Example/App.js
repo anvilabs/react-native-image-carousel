@@ -13,7 +13,6 @@ import ImageCarousel from 'react-native-image-carousel';
 
 /* eslint-disable max-len */
 const urls = [
-  'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/123.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/67003.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/51681.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/66812.max-620x600.jpg',
@@ -57,7 +56,6 @@ export default class App extends Component {
         style={StyleSheet.absoluteFill}
         resizeMode={'contain'}
         source={{ uri: urls[i] }}
-        defaultSource={require('./placeholder.png')}
       />
     );
   }
@@ -79,7 +77,6 @@ export default class App extends Component {
                 style={styles.image}
                 key={url}
                 source={{ uri: url, width: 200 }}
-                defaultSource={require('./placeholder.png')}
               />
             ))}
           </ImageCarousel>
