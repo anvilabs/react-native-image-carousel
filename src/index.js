@@ -11,8 +11,10 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
+// eslint-disable-next-line
 } from 'react-native';
 import _ from 'lodash/fp';
+// eslint-disable-next-line
 import React, { Component, PropTypes } from 'react';
 import SwipeableViews from 'react-swipeable-views/lib/index.native.scroll';
 
@@ -30,7 +32,8 @@ type Props = {
   onIdxChange?: (idx: number) => void,
   onOpen?: () => void,
   onClose?: () => void,
-} & View.props;
+};
+
 type State = {
   origin: {
     x: number,
@@ -98,18 +101,11 @@ export default class ImageCarousel extends Component {
       slidesDown: false,
     };
 
-    this._carouselItems = _.isArray(props.children)
-      ? _.map(null)(props.children)
-      : [null];
+    this._carouselItems = _.isArray(props.children) ?
+      _.map(null)(props.children) : [null];
   }
 
   componentWillMount() {
-    (this: any)._handlePanEnd = this._handlePanEnd.bind(this);
-    (this: any).open = this.open.bind(this);
-    (this: any).close = this.close.bind(this);
-    (this: any)._getSwipeableStyle = this._getSwipeableStyle.bind(this);
-    (this: any)._renderFullscreen = this._renderFullscreen.bind(this);
-
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => !this.state.animating,
       onStartShouldSetPanResponderCapture: () => !this.state.animating,
@@ -139,7 +135,7 @@ export default class ImageCarousel extends Component {
       || nextState.selectedIdx !== this.state.selectedIdx);
   }
 
-  open(startIdx: number) {
+  open = (startIdx: number) => {
     const activeComponents = this.props.activeComponents || this._carouselItems;
 
     this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
@@ -167,7 +163,7 @@ export default class ImageCarousel extends Component {
     });
   }
 
-  close() {
+  close = () => {
     const activeComponents = this.props.activeComponents || this._carouselItems;
 
     this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
@@ -197,7 +193,7 @@ export default class ImageCarousel extends Component {
     });
   }
 
-  _handlePanEnd(evt: Object, gestureState: Object) {
+  _handlePanEnd = (evt: Object, gestureState: Object) => {
     if (Math.abs(gestureState.dy) > 150) {
       this.setState({
         panning: false,
@@ -217,7 +213,7 @@ export default class ImageCarousel extends Component {
     }
   }
 
-  _getSwipeableStyle(idx: number): Object {
+  _getSwipeableStyle = (idx: number): Object => {
     const {
       fullscreen, openAnim, origin, selectedIdx, slidesDown, target,
     } = this.state;
@@ -256,7 +252,7 @@ export default class ImageCarousel extends Component {
     return { flex: 1 };
   }
 
-  _renderFullscreen(): ReactElement<any> {
+  _renderFullscreen = (): ReactElement<any> => {
     const {
       animating,
       fullscreen,
@@ -347,15 +343,11 @@ export default class ImageCarousel extends Component {
           }
         </SwipeableViews>
         <Animated.View style={[opacity, styles.headerContainer]}>
-          {header
-            ? React.cloneElement(header, {
+          {header ? React.cloneElement(header, {
               ...header.props,
               style: [header.props.style],
-            })
-            : (
-            <TouchableWithoutFeedback
-              onPress={this.close}
-            >
+            }) : (
+            <TouchableWithoutFeedback onPress={this.close}>
               <View>
                 <Text style={styles.closeText}>Close</Text>
               </View>
