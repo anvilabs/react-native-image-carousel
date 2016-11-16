@@ -365,11 +365,14 @@ export default class ImageCarousel extends Component {
   }
 
   render(): ReactElement<any> {
+    const { children, style } = this.props;
+    const { animating, selectedImageHidden, selectedIdx } = this.state;
+
     return (
-      <View style={this.props.style}>
+      <View style={style}>
         <ScrollView
           horizontal
-          scrollEnabled={!this.state.animating}
+          scrollEnabled={!animating}
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
         >
@@ -377,23 +380,21 @@ export default class ImageCarousel extends Component {
             (child: ReactElement<any>, idx: number) => (
               <TouchableWithoutFeedback
                 key={idx}
-                onPress={() => { this.open(idx); }}
+                onPress={() => this.open(idx)}
               >
                 <View
                   ref={(carouselItem: View) => {
                     this._carouselItems[idx] = carouselItem;
                   }}
+                  // eslint-disable-next-line react-native/no-inline-styles
                   style={{
-                    opacity: this.state.selectedImageHidden
-                      && this.state.selectedIdx === idx ? 0 : 1,
+                    opacity: selectedImageHidden && selectedIdx === idx ? 0 : 1,
                   }}
                 >
                   {child}
                 </View>
               </TouchableWithoutFeedback>
-          ))(_.isArray(this.props.children)
-            ? this.props.children : [this.props.children]
-          )}
+          ))(_.isArray(children) ? children : [children])}
         </ScrollView>
         {this.state.fullscreen && this._renderFullscreen()}
       </View>

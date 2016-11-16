@@ -2,6 +2,7 @@
 
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -12,7 +13,7 @@ import ImageCarousel from 'react-native-image-carousel';
 
 /* eslint-disable max-len */
 const urls = [
-  'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/66807.max-620x600.jpg',
+  'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/123.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/67003.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/51681.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/66812.max-620x600.jpg',
@@ -26,6 +27,8 @@ export default class App extends Component {
   componentWillMount() {
     (this: any)._renderHeader = this._renderHeader.bind(this);
     (this: any)._handleHeaderPress = this._handleHeaderPress.bind(this);
+
+    StatusBar.setBarStyle('light-content');
   }
 
   _handleHeaderPress() {
@@ -48,26 +51,39 @@ export default class App extends Component {
     );
   }
 
+  renderImage(i: number) {
+    return (
+      <Image
+        style={StyleSheet.absoluteFill}
+        resizeMode={'contain'}
+        source={{ uri: urls[i] }}
+        defaultSource={require('./placeholder.png')}
+      />
+    );
+  }
+
   render(): ReactElement<any> {
     return (
       <View style={styles.container}>
-        <ImageCarousel
-          ref={(imageCarousel: ImageCarousel) => {
-            this._imageCarousel = imageCarousel;
-          }}
-          activeProps={{ style: { flex: 1 } }}
-          renderHeader={this._renderHeader}
-          renderFooter={this._renderFooter}
-        >
-          {urls.map((url: string): ReactElement<any> => (
-            <Image
-              key={url}
-              style={[styles.image]}
-              source={{ uri: url, height: 100 }}
-              resizeMode={'contain'}
-            />
-          ))}
-        </ImageCarousel>
+        <Text>ADDITIONAL IMAGES</Text>
+        <View>
+          <ImageCarousel
+            ref={(imageCarousel: ImageCarousel) => {
+              this._imageCarousel = imageCarousel;
+            }}
+            renderContent={this.renderImage}
+            onIdxChange={() => console.log('wtf')}
+          >
+            {urls.map((url: string) => (
+              <Image
+                style={styles.image}
+                key={url}
+                source={{ uri: url, width: 200 }}
+                defaultSource={require('./placeholder.png')}
+              />
+            ))}
+          </ImageCarousel>
+        </View>
       </View>
     );
   }
@@ -77,7 +93,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   closeText: {
     color: 'white',
@@ -90,7 +105,6 @@ const styles = StyleSheet.create({
   },
   image: {
     marginRight: 2,
-    width: 100,
     height: 100,
   },
 });
