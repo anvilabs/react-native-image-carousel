@@ -365,16 +365,18 @@ export default class ImageCarousel extends Component {
   }
 
   render(): ReactElement<any> {
-    const { children, style } = this.props;
+    const { children, style, horizontal, contentContainerStyle } = this.props;
     const { animating, selectedImageHidden, selectedIdx } = this.state;
+    const isHorizontal = horizontal === undefined ? true : horizontal;
 
     return (
       <View style={style}>
         <ScrollView
-          horizontal
+          horizontal={isHorizontal}
           scrollEnabled={!animating}
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
+          contentContainerStyle={contentContainerStyle}
         >
           {_.map.convert({ cap: false })(
             (child: ReactElement<any>, idx: number) => (
