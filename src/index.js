@@ -285,6 +285,7 @@ export default class ImageCarousel extends Component {
       <Modal
         transparent
         visible={fullscreen}
+        onRequestClose={this.close}
         onShow={() => {
           if (!selectedImageHidden && animating) {
             this.setState({ selectedImageHidden: true });
