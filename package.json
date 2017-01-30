@@ -21,7 +21,7 @@
   "repository": "anvilabs/react-native-image-carousel",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.2",
+    "lodash": "^4.17.4",
     "react-swipeable-views": "^0.8.0"
   },
   "peerDependencies": {
@@ -29,8 +29,8 @@
     "react-native": "^0.37.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
-    "eslint": "^3.10.2",
-    "eslint-config-anvilabs": "^2.0.1"
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.14.1",
+    "eslint-config-anvilabs": "^4.0.0"
   }
 }
