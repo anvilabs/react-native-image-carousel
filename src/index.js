@@ -311,7 +311,10 @@ export default class ImageCarousel extends Component {
           alwaysBounceVertical={false}
         >
           {content
-            ? React.cloneElement(content, this._panResponder.panHandlers)
+            ? React.cloneElement(content, {
+              ...content
+              ...this._panResponder.panHandlers
+            })
             : React.cloneElement(child, {
               ...child.props,
               ...this.props.activeProps,
