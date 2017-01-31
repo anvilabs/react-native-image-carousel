@@ -641,7 +641,7 @@ babel-register@^6.18.0, babel-register@^6.22.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.20.0, babel-runtime@^6.22.0, babel-runtime@^6.9.0, babel-runtime@^6.9.1:
+babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.9.0, babel-runtime@^6.9.1:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.22.0.tgz#1cf8b4ac67c77a4ddb0db2ae1f74de52ac4ca611"
   dependencies:
@@ -1671,10 +1671,6 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.3.6"
 
-keycode@^2.1.7:
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.1.8.tgz#94d2b7098215eff0e8f9a8931d5a59076c4532fb"
-
 kind-of@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.0.4.tgz#7b8ecf18a4e17f8269d73b501c9f232c96887a74"
@@ -1808,7 +1804,7 @@ lodash@^3.5.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.14.0, lodash@^4.16.1, lodash@^4.16.6, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
+lodash@^4.14.0, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -2200,13 +2196,6 @@ raw-body@~2.1.2:
     iconv-lite "0.4.13"
     unpipe "1.0.0"
 
-"react-addons-shallow-compare@^0.14.0 || ^15.0.0", react-addons-shallow-compare@^15.4.2:
-  version "15.4.2"
-  resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.4.2.tgz#027ffd9720e3a1e0b328dcd8fc62e214a0d174a5"
-  dependencies:
-    fbjs "^0.8.4"
-    object-assign "^4.1.0"
-
 react-clone-referenced-element@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-clone-referenced-element/-/react-clone-referenced-element-1.0.1.tgz#2bba8c69404c5e4a944398600bcc4c941f860682"
@@ -2215,20 +2204,12 @@ react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
 
-react-event-listener@^0.4.0:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/react-event-listener/-/react-event-listener-0.4.1.tgz#86b53974c3df651857766b7b177682ed7c7c8318"
+react-native-image-carousel@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-carousel/-/react-native-image-carousel-0.3.2.tgz#bdab31d5566c82d1c4947be7c86c4c32f0a48eeb"
   dependencies:
-    babel-runtime "^6.20.0"
-    react-addons-shallow-compare "^15.4.2"
-    warning "^3.0.0"
-
-react-native-image-carousel@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-image-carousel/-/react-native-image-carousel-0.2.4.tgz#6a1c73d8ca0c6792fca5caa517b1a7642797cf97"
-  dependencies:
-    lodash "^4.16.1"
-    react-swipeable-views "^0.7.6"
+    lodash "^4.17.4"
+    react-swipeable-views-native "^0.10.1"
 
 react-native@0.40.0:
   version "0.40.0"
@@ -2318,14 +2299,19 @@ react-proxy@^1.1.7:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
 
-react-swipeable-views@^0.7.6:
-  version "0.7.11"
-  resolved "https://registry.yarnpkg.com/react-swipeable-views/-/react-swipeable-views-0.7.11.tgz#e2db996954e2fa3872b980048e7f2632876dd71d"
+react-swipeable-views-core@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/react-swipeable-views-core/-/react-swipeable-views-core-0.10.1.tgz#aadb91640193679f931274eba483775f6d136e2d"
   dependencies:
     babel-runtime "^6.11.6"
-    keycode "^2.1.7"
-    react-addons-shallow-compare "^0.14.0 || ^15.0.0"
-    react-event-listener "^0.4.0"
+    warning "^3.0.0"
+
+react-swipeable-views-native@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/react-swipeable-views-native/-/react-swipeable-views-native-0.10.1.tgz#6cda640ee8f8bba029acf53a1299bf62e8c5be3a"
+  dependencies:
+    babel-runtime "^6.11.6"
+    react-swipeable-views-core "^0.10.1"
     warning "^3.0.0"
 
 react-timer-mixin@^0.13.2:
