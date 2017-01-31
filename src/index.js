@@ -11,27 +11,37 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
-// eslint-disable-next-line
 } from 'react-native';
 import _ from 'lodash/fp';
-// eslint-disable-next-line
 import React, { Component, PropTypes } from 'react';
 import SwipeableViews from 'react-swipeable-views/lib/index.native.scroll';
 
 const ANIM_CONFIG = { duration: 300 };
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
+type MeasureAbleReactElement = React$Element<any> & {
+  measure: (
+    rx: number, ry: number,
+    width: number, height: number,
+    x: number, y: number,
+  ) => void,
+};
+
 type Props = {
+  style?: Object,
+  contentContainerStyle?: Object,
   activeProps?: Object,
-  activeComponents?: [ReactElement<any>],
+  activeComponents?: Array<React$Element<any>>,
+  children?: Array<React$Element<any>>,
   zoomEnabled?: boolean,
   hideStatusBarOnOpen?: boolean,
-  renderHeader?: () => ReactElement<any>,
-  renderFooter?: () => ReactElement<any>,
-  renderContent?: (idx: number) => ReactElement<any>,
+  renderHeader?: () => React$Element<any>,
+  renderFooter?: () => React$Element<any>,
+  renderContent?: (idx: number) => React$Element<any>,
   onIdxChange?: (idx: number) => void,
   onOpen?: () => void,
   onClose?: () => void,
+  horizontal?: boolean,
 };
 
 type State = {
@@ -60,7 +70,30 @@ export default class ImageCarousel extends Component {
   props: Props;
   state: State;
   _panResponder: PanResponder;
-  _carouselItems: [View];
+  _carouselItems: Array<?View> = _.isArray(this.props.children) ?
+    _.map(null)(this.props.children) : [null];
+
+  state = {
+    origin: {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    },
+    target: {
+      x: 0,
+      y: 0,
+      opacity: 1,
+    },
+    openAnim: new Animated.Value(0),
+    pan: new Animated.Value(0),
+    fullscreen: false,
+    selectedIdx: 0,
+    animating: false,
+    panning: false,
+    selectedImageHidden: false,
+    slidesDown: false,
+  };
 
   static propTypes = {
     activeProps: PropTypes.object,
@@ -76,35 +109,6 @@ export default class ImageCarousel extends Component {
     hideStatusBarOnOpen: true,
   };
 
-  constructor(props: View.props) {
-    super(props);
-
-    this.state = {
-      origin: {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-      },
-      target: {
-        x: 0,
-        y: 0,
-        opacity: 1,
-      },
-      openAnim: new Animated.Value(0),
-      pan: new Animated.Value(0),
-      fullscreen: false,
-      selectedIdx: 0,
-      animating: false,
-      panning: false,
-      selectedImageHidden: false,
-      slidesDown: false,
-    };
-
-    this._carouselItems = _.isArray(props.children) ?
-      _.map(null)(props.children) : [null];
-  }
-
   componentWillMount() {
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => !this.state.animating,
@@ -115,6 +119,7 @@ export default class ImageCarousel extends Component {
 
       onPanResponderMove: (evt: Object, gestureState: Object) => {
         Animated.event([null, { dy: this.state.pan }])(evt, gestureState);
+
         if (Math.abs(gestureState.dy) > 15 && !this.state.panning) {
           this.state.pan.setValue(0);
           this.setState({ panning: true });
@@ -136,12 +141,15 @@ export default class ImageCarousel extends Component {
   }
 
   open = (startIdx: number) => {
-    const activeComponents = this.props.activeComponents || this._carouselItems;
+    const { hideStatusBarOnOpen, onIdxChange, onOpen } = this.props;
+    const activeComponent = this._getComponentAtIdx(startIdx);
 
-    this.props.hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
+    if (!activeComponent) return;
+
+    hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
     this.setState({ fullscreen: true });
 
-    activeComponents[startIdx].measure((
+    (activeComponent: any).measure((
       rx: number, ry: number,
       width: number, height: number,
       x: number, y: number,
@@ -152,24 +160,24 @@ export default class ImageCarousel extends Component {
         origin: { x, y, width, height },
         target: { x: 0, y: 0, opacity: 1 },
       });
-      this.props.onIdxChange && this.props.onIdxChange(startIdx);
 
-      Animated.timing(this.state.openAnim,
-        { ...ANIM_CONFIG, toValue: 1 },
-      ).start(() => {
-        this.setState({ animating: false });
-        this.props.onOpen && this.props.onOpen();
-      });
+      onIdxChange && onIdxChange(startIdx);
+
+      this._animateOpenAnimToValue(1, onOpen);
     });
-  }
+  };
 
   close = () => {
-    const activeComponents = this.props.activeComponents || this._carouselItems;
+    const { hideStatusBarOnOpen, onClose } = this.props;
 
-    this.props.hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
+    const activeComponent = this._getComponentAtIdx(this.state.selectedIdx);
+
+    if (!activeComponent) return;
+
+    hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
     this.setState({ animating: true });
 
-    activeComponents[this.state.selectedIdx].measure((
+    (activeComponent: any).measure((
       rx: number, ry: number,
       width: number, height: number,
       x: number, y: number,
@@ -178,22 +186,44 @@ export default class ImageCarousel extends Component {
         origin: { x, y, width, height },
         slidesDown: x + width < 0 || x > screenWidth,
       });
-      Animated.timing(
-        this.state.openAnim,
-        { ...ANIM_CONFIG, toValue: 0 },
-      ).start(() => {
+
+      this._animateOpenAnimToValue(0, () => {
         this.setState({
-          animating: false,
           fullscreen: false,
           selectedImageHidden: false,
           slidesDown: false,
         });
-        this.props.onClose && this.props.onClose();
+
+        onClose && onClose();
       });
     });
+  };
+
+  _setCarouselItem = (carouselItem: View, idx: number) => {
+    this._carouselItems[idx] = carouselItem;
   }
 
-  _handlePanEnd = (evt: Object, gestureState: Object) => {
+  _getChildren = () => {
+    const { children } = this.props;
+    return _.isArray(children) ? children : [children];
+  }
+
+  _getComponentAtIdx = (idx: number) => {
+    const { activeComponents } = this.props;
+    return activeComponents ? activeComponents[idx] : this._carouselItems[idx];
+  };
+
+  _animateOpenAnimToValue = (toValue: number, onComplete?: () => void) => (
+    Animated.timing(this.state.openAnim, {
+      ...ANIM_CONFIG,
+      toValue,
+    }).start(() => {
+      this.setState({ animating: false });
+      onComplete && onComplete();
+    })
+  );
+
+  _handlePanEnd = (evt: any, gestureState: { dx: number, dy: number }) => {
     if (Math.abs(gestureState.dy) > 150) {
       this.setState({
         panning: false,
@@ -206,12 +236,12 @@ export default class ImageCarousel extends Component {
 
       this.close();
     } else {
-      Animated.timing(
-        this.state.pan,
-        { toValue: 0, ...ANIM_CONFIG },
-      ).start(() => this.setState({ panning: false }));
+      Animated.timing(this.state.pan, {
+        toValue: 0,
+        ...ANIM_CONFIG,
+      }).start(() => this.setState({ panning: false }));
     }
-  }
+  };
 
   _getSwipeableStyle = (idx: number): Object => {
     const {
@@ -220,192 +250,193 @@ export default class ImageCarousel extends Component {
 
     const inputRange = [0, 1];
 
-    if (fullscreen && idx === selectedIdx) {
-      return !slidesDown ? {
-        left: openAnim.interpolate({
-          // $FlowFixMe
-          inputRange, outputRange: [origin.x, target.x],
-        }),
-        top: openAnim.interpolate({
-          // $FlowFixMe
-          inputRange, outputRange: [origin.y, target.y],
-        }),
-        width: openAnim.interpolate({
-          // $FlowFixMe
-          inputRange, outputRange: [origin.width, screenWidth],
-        }),
-        height: openAnim.interpolate({
-          // $FlowFixMe
-          inputRange, outputRange: [origin.height, screenHeight],
-        }),
-      } : {
-        left: 0,
-        right: 0,
-        height: screenHeight,
-        top: openAnim.interpolate({
-          // $FlowFixMe
-          inputRange, outputRange: [screenHeight, target.y],
-        }),
-      };
+    if (!fullscreen || idx !== selectedIdx) return { flex: 1 };
+
+    return !slidesDown ? {
+      left: openAnim.interpolate({
+        inputRange, outputRange: [origin.x, target.x],
+      }),
+      top: openAnim.interpolate({
+        inputRange, outputRange: [origin.y, target.y],
+      }),
+      width: openAnim.interpolate({
+        inputRange, outputRange: [origin.width, screenWidth],
+      }),
+      height: openAnim.interpolate({
+        inputRange, outputRange: [origin.height, screenHeight],
+      }),
+    } : {
+      left: 0,
+      right: 0,
+      height: screenHeight,
+      top: openAnim.interpolate({
+        inputRange, outputRange: [screenHeight, target.y],
+      }),
+    };
+  };
+
+  _handleModalShow = () => {
+    const { animating, selectedImageHidden } = this.state;
+
+    if (!selectedImageHidden && animating) {
+      this.setState({ selectedImageHidden: true });
     }
+  };
 
-    return { flex: 1 };
-  }
+  _handleChangeIdx = (idx: number) => {
+    const { onIdxChange } = this.props;
 
-  _renderFullscreen = (): ReactElement<any> => {
-    const {
-      animating,
-      fullscreen,
-      openAnim,
-      pan,
-      panning,
-      selectedIdx,
-      selectedImageHidden,
-      target,
-    } = this.state;
+    this.setState({ selectedIdx: idx });
+    onIdxChange && onIdxChange(idx);
+  };
 
-    const header = this.props.renderHeader && this.props.renderHeader();
-    const footer = this.props.renderFooter && this.props.renderFooter();
+  _renderFullscreenContent = (child: React$Element<any>, idx: number) => {
+    const { renderContent, zoomEnabled } = this.props;
+    const { selectedIdx, panning } = this.state;
 
-    const opacity = {
+    const content = renderContent && renderContent(idx);
+    const containerStyle = [
+      this._getSwipeableStyle(idx),
+      (selectedIdx === idx && panning) && {
+        top: this.state.pan,
+      },
+    ];
+
+    return (
+      <Animated.View key={idx} style={containerStyle}>
+        <ScrollView
+          style={styles.fill}
+          contentContainerStyle={styles.fill}
+          maximumZoomScale={zoomEnabled ? 2 : 1}
+          alwaysBounceVertical={false}
+        >
+          {content
+            ? React.cloneElement(content, this._panResponder.panHandlers)
+            : React.cloneElement(child, {
+              ...child.props,
+              ...this.props.activeProps,
+              ...this._panResponder.panHandlers,
+            })
+          }
+        </ScrollView>
+      </Animated.View>
+    );
+  };
+
+  _renderDefaultHeader = () => (
+    <TouchableWithoutFeedback onPress={this.close}>
+      <View>
+        <Text style={styles.closeText}>Close</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+
+  _getFullscreenOpacity = () => {
+    const { openAnim, pan, panning, target } = this.state;
+
+    return {
       opacity: panning
         ? pan.interpolate({
           inputRange: [-screenHeight, 0, screenHeight],
-          // $FlowFixMe
           outputRange: [0, 1, 0],
         })
         : openAnim.interpolate({
           inputRange: [0, 1],
-          // $FlowFixMe
           outputRange: [0, target.opacity],
         }),
     };
+  };
+
+  _renderFullscreen = () => {
+    const { children, renderHeader, renderFooter } = this.props;
+    const {
+      animating, fullscreen, openAnim, panning, selectedIdx,
+    } = this.state;
+
+    const opacity = this._getFullscreenOpacity();
+
+    const header = renderHeader && renderHeader();
+    const footer = renderFooter && renderFooter();
 
     return (
       <Modal
         transparent
         visible={fullscreen}
+        onShow={this._handleModalShow}
         onRequestClose={this.close}
-        onShow={() => {
-          if (!selectedImageHidden && animating) {
-            this.setState({ selectedImageHidden: true });
-          }
-        }}
       >
         <Animated.View style={[styles.modalBackground, opacity]} />
         <SwipeableViews
           style={StyleSheet.absoluteFill}
           index={selectedIdx}
-          onChangeIndex={(idx: number) => {
-            this.setState({ selectedIdx: idx });
-            this.props.onIdxChange && this.props.onIdxChange(idx);
-          }}
+          onChangeIndex={this._handleChangeIdx}
           scrollEnabled={!animating && !panning}
         >
-          {_
-            .map
-            .convert({ cap: false })(
-              (child: ReactElement<any>, idx: number): ReactElement<any> => {
-                const content =
-                  this.props.renderContent && this.props.renderContent(idx);
-
-                return (
-                  <Animated.View
-                    key={idx}
-                    style={[
-                      this._getSwipeableStyle(idx),
-                      (selectedIdx === idx && panning) &&
-                        { top: this.state.pan },
-                    ]}
-                  >
-                    <ScrollView
-                      style={{ flex: 1 }}
-                      contentContainerStyle={{ flex: 1 }}
-                      maximumZoomScale={this.props.zoomEnabled ? 2 : 1}
-                      alwaysBounceVertical={false}
-                    >
-                      {content
-                        ? React.cloneElement(content, {
-                          ...this._panResponder.panHandlers,
-                        })
-                        : React.cloneElement(child, {
-                          ...child.props,
-                          ...this.props.activeProps,
-                          ...this._panResponder.panHandlers,
-                        })
-                      }
-                    </ScrollView>
-                  </Animated.View>
-                );
-              },
-            )(_.isArray(this.props.children)
-              ? this.props.children : [this.props.children]
-            )
-          }
+          {_.map.convert({ cap: false })(
+            this._renderFullscreenContent,
+          )(this._getChildren())}
         </SwipeableViews>
         <Animated.View style={[opacity, styles.headerContainer]}>
           {header ? React.cloneElement(header, {
-              ...header.props,
-              style: [header.props.style],
-            }) : (
-            <TouchableWithoutFeedback onPress={this.close}>
-              <View>
-                <Text style={styles.closeText}>Close</Text>
-              </View>
-            </TouchableWithoutFeedback>
-            )
-          }
+            ...header.props,
+            style: [header.props.style],
+          }) : this._renderDefaultHeader()}
         </Animated.View>
-        {footer &&
+        {footer && (
           <Animated.View style={[opacity, styles.footerContainer]}>
             {footer}
           </Animated.View>
-        }
+        )}
       </Modal>
     );
-  }
+  };
 
-  render(): ReactElement<any> {
-    const { children, style, horizontal, contentContainerStyle } = this.props;
-    const { animating, selectedImageHidden, selectedIdx } = this.state;
-    const isHorizontal = horizontal === undefined ? true : horizontal;
+  render() {
+    const {
+      children, style, horizontal = true, contentContainerStyle,
+    } = this.props;
+    const {
+      fullscreen, animating, selectedImageHidden, selectedIdx,
+    } = this.state;
+
+    const getOpacity = (idx: number) => ({
+      opacity: selectedImageHidden && selectedIdx === idx ? 0 : 1,
+    });
 
     return (
       <View style={style}>
         <ScrollView
-          horizontal={isHorizontal}
+          horizontal={horizontal}
+          contentContainerStyle={contentContainerStyle}
           scrollEnabled={!animating}
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={contentContainerStyle}
         >
           {_.map.convert({ cap: false })(
-            (child: ReactElement<any>, idx: number) => (
+            (child: React$Element<any>, idx: number) => (
               <TouchableWithoutFeedback
                 key={idx}
                 onPress={() => this.open(idx)}
               >
                 <View
-                  ref={(carouselItem: View) => {
-                    this._carouselItems[idx] = carouselItem;
-                  }}
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  style={{
-                    opacity: selectedImageHidden && selectedIdx === idx ? 0 : 1,
-                  }}
+                  ref={(view: View) => this._setCarouselItem(view, idx)}
+                  style={getOpacity(idx)}
                 >
                   {child}
                 </View>
               </TouchableWithoutFeedback>
-          ))(_.isArray(children) ? children : [children])}
+          ))(this._getChildren())}
         </ScrollView>
-        {this.state.fullscreen && this._renderFullscreen()}
+        {fullscreen && this._renderFullscreen()}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+  },
   modalBackground: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'black',
