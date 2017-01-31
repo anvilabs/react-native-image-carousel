@@ -8,8 +8,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, { Component } from 'react';
 import ImageCarousel from 'react-native-image-carousel';
+import React, { Component } from 'react';
 
 /* eslint-disable max-len */
 const urls = [
@@ -20,29 +20,26 @@ const urls = [
 ];
 /* eslint-enable max-len */
 
-export default class App extends Component {
+class App extends Component {
   _imageCarousel: ImageCarousel;
 
   componentWillMount() {
-    (this: any)._renderHeader = this._renderHeader.bind(this);
-    (this: any)._handleHeaderPress = this._handleHeaderPress.bind(this);
-
     StatusBar.setBarStyle('light-content');
   }
 
-  _handleHeaderPress() {
-    this._imageCarousel.close();
-  }
+  _setImageCarousel = (imageCarousel: ImageCarousel) => {
+    this._imageCarousel = imageCarousel;
+  };
 
-  _renderHeader(): ReactElement<any> {
-    return (
-      <TouchableWithoutFeedback onPress={this._handleHeaderPress}>
-        <View>
-          <Text style={styles.closeText}>Exit</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
+  _handleHeaderPress = () => this._imageCarousel.close();
+
+  _renderHeader = () => (
+    <TouchableWithoutFeedback onPress={this._handleHeaderPress}>
+      <View>
+        <Text style={styles.closeText}>Exit</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
 
   _renderFooter(): ReactElement<any> {
     return (
@@ -50,27 +47,22 @@ export default class App extends Component {
     );
   }
 
-  renderImage(i: number) {
-    return (
-      <Image
-        style={StyleSheet.absoluteFill}
-        resizeMode="contain"
-        source={{ uri: urls[i] }}
-      />
-    );
-  }
+  renderImage = (i: number) => (
+    <Image
+      style={StyleSheet.absoluteFill}
+      resizeMode="contain"
+      source={{ uri: urls[i] }}
+    />
+  );
 
   render(): ReactElement<any> {
     return (
       <View style={styles.container}>
-        <Text>ADDITIONAL IMAGES</Text>
+        <Text>IMAGES</Text>
         <View>
           <ImageCarousel
-            ref={(imageCarousel: ImageCarousel) => {
-              this._imageCarousel = imageCarousel;
-            }}
+            ref={this._setImageCarousel}
             renderContent={this.renderImage}
-            onIdxChange={() => console.log('wtf')}
           >
             {urls.map((url: string) => (
               <Image
@@ -106,3 +98,5 @@ const styles = StyleSheet.create({
     height: 100,
   },
 });
+
+export default App;
