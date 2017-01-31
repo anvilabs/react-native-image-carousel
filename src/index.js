@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import _ from 'lodash/fp';
 import React, { Component, PropTypes } from 'react';
-import SwipeableViews from 'react-swipeable-views/lib/index.native.scroll';
+import SwipeableViews from 'react-swipeable-views-native';
 
 const ANIM_CONFIG = { duration: 300 };
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -250,8 +250,7 @@ export default class ImageCarousel extends Component {
 
     const inputRange = [0, 1];
 
-    if (!fullscreen) return { };
-    if (idx !== selectedIdx) return StyleSheet.absoluteFill;
+    if (!fullscreen || idx !== selectedIdx) return { flex: 1 };
 
     return !slidesDown ? {
       left: openAnim.interpolate({
@@ -313,8 +312,8 @@ export default class ImageCarousel extends Component {
         >
           {content
             ? React.cloneElement(content, {
-              ...content
-              ...this._panResponder.panHandlers
+              ...content.props,
+              ...this._panResponder.panHandlers,
             })
             : React.cloneElement(child, {
               ...child.props,
