@@ -250,7 +250,8 @@ export default class ImageCarousel extends Component {
 
     const inputRange = [0, 1];
 
-    if (!fullscreen || idx !== selectedIdx) return { flex: 1 };
+    if (!fullscreen) return { };
+    if (idx !== selectedIdx) return StyleSheet.absoluteFill;
 
     return !slidesDown ? {
       left: openAnim.interpolate({
