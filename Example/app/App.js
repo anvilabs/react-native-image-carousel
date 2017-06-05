@@ -9,69 +9,61 @@ import {
   View,
 } from 'react-native';
 import ImageCarousel from 'react-native-image-carousel';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-/* eslint-disable max-len */
 const urls = [
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/67003.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/51681.max-620x600.jpg',
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/66812.max-620x600.jpg',
   'https://myanimelist.cdn-dena.com/s/common/uploaded_files/1438960604-925d1997518b66f8508c749f36810793.jpeg',
 ];
-/* eslint-enable max-len */
 
 class App extends Component {
-  _imageCarousel: ImageCarousel;
+  imageCarousel: React$Element<*>;
 
   componentWillMount() {
     StatusBar.setBarStyle('light-content');
   }
 
-  _setImageCarousel = (imageCarousel: ImageCarousel) => {
-    this._imageCarousel = imageCarousel;
+  setImageCarousel = (imageCarousel: React$Element<*>) => {
+    this.imageCarousel = imageCarousel;
   };
 
-  _handleHeaderPress = () => this._imageCarousel.close();
+  handleHeaderPress = () => (this.imageCarousel: $FlowFixMe).close();
 
-  _renderHeader = () => (
-    <TouchableWithoutFeedback onPress={this._handleHeaderPress}>
+  renderHeader = () =>
+    <TouchableWithoutFeedback onPress={this.handleHeaderPress}>
       <View>
         <Text style={styles.closeText}>Exit</Text>
       </View>
-    </TouchableWithoutFeedback>
-  );
+    </TouchableWithoutFeedback>;
 
-  _renderFooter(): React$Element<any> {
-    return (
-      <Text style={styles.footerText}>Footer!</Text>
-    );
-  }
+  renderFooter = () => <Text style={styles.footerText}>Footer!</Text>;
 
-  renderImage = (i: number) => (
+  renderImage = (i: number) =>
     <Image
       style={StyleSheet.absoluteFill}
       resizeMode="contain"
-      source={{ uri: urls[i] }}
-    />
-  );
+      source={{uri: urls[i]}}
+    />;
 
-  render(): React$Element<any> {
+  render() {
     return (
       <View style={styles.container}>
         <Text>IMAGES</Text>
         <View>
           <ImageCarousel
-            ref={this._setImageCarousel}
+            ref={this.setImageCarousel}
             renderContent={this.renderImage}
           >
-            {urls.map((url: string) => (
+            {urls.map(url =>
               <Image
                 style={styles.image}
                 key={url}
-                source={{ uri: url, width: 200 }}
+                source={{uri: url, width: 200}}
                 resizeMode="contain"
-              />
-            ))}
+              />,
+            )}
           </ImageCarousel>
         </View>
       </View>

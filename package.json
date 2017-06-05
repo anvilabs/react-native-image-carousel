@@ -3,11 +3,9 @@
   "version": "0.3.2",
   "description": "Image carousel with support for fullscreen mode with swiping and pinch-to-zoom.",
   "homepage": "https://github.com/anvilabs/react-native-image-carousel",
-  "main": "src/index.js",
-  "scripts": {
-    "typecheck": "flow .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "author": "Binur Konarbai <binchik@anvilabs.co>",
+  "repository": "anvilabs/react-native-image-carousel",
+  "license": "MIT",
   "keywords": [
     "react-native",
     "image",
@@ -18,21 +16,52 @@
     "swipe",
     "slide"
   ],
-  "author": "Binur Konarbai <binchik@anvilabs.co>",
-  "repository": "anvilabs/react-native-image-carousel",
-  "license": "MIT",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "typecheck": "flow .",
+    "flow:coverage": "flow-coverage-report -i 'src/**/*.js' -x '**/__tests__/**' -t text -t html -f ./node_modules/.bin/flow",
+    "lint": "eslint --cache .",
+    "lint:fix": "eslint --cache --fix .",
+    "test": "run-p --silent typecheck lint",
+    "precommit": "lint-staged",
+    "commitmsg": "validate-commit-msg",
+    "prepush": "nyr test"
+  },
+  "lint-staged": {
+    "{src,Example/app}/**/*.js": [
+      "eslint --cache --fix",
+      "git add"
+    ]
+  },
+  "config": {
+    "validate-commit-msg": {
+      "maxSubjectLength": 72,
+      "types": "conventional-commit-types"
+    }
+  },
   "dependencies": {
-    "lodash": "^4.17.4",
-    "react-swipeable-views-native": "^0.10.1"
+    "react-swipeable-views-native": "^0.12.2"
   },
   "peerDependencies": {
-    "react": "^15.4.2",
-    "react-native": "^0.40.0"
+    "react": "^15.x.x",
+    "react-native": ">=0.40"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "eslint": "^3.14.1",
-    "eslint-config-anvilabs": "^4.0.0",
-    "flow-bin": "^0.47.0"
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-preset-react-native": "^1.9.2",
+    "eslint": "^3.19.0",
+    "eslint-config-anvilabs": "^9.1.1",
+    "flow-bin": "^0.47.0",
+    "flow-coverage-report": "^0.3.0",
+    "husky": "^0.13.4",
+    "lint-staged": "^3.6.0",
+    "npm-run-all": "^4.0.2",
+    "nyr": "^1.1.0",
+    "prettier": "^1.4.2",
+    "validate-commit-msg": "^2.12.1"
   }
 }

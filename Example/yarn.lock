@@ -2204,8 +2204,9 @@ react-deep-force-update@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.0.1.tgz#f911b5be1d2a6fe387507dd6e9a767aa2924b4c7"
 
-"react-native-image-carousel@file:../":
+react-native-image-carousel@^0.3.2:
   version "0.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-carousel/-/react-native-image-carousel-0.3.2.tgz#bdab31d5566c82d1c4947be7c86c4c32f0a48eeb"
   dependencies:
     lodash "^4.17.4"
     react-swipeable-views-native "^0.10.1"

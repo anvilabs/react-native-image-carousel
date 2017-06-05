@@ -1,6 +1,22 @@
-# OSX
+# macOS
+#
 .DS_Store
 
 # node.js
-node_modules/
-npm-debug.log
+#
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+
+# VSCode
+#
+/.vscode/typings/
+
+# ESLint
+#
+/.eslintcache
+
+# Flow
+#
+/flow-coverage/
+

@@ -1,21 +1,18 @@
 module.exports = {
   extends: [
     'anvilabs',
+    'anvilabs/flowtype',
     'anvilabs/react-native',
-    'anvilabs/lodash',
   ],
-  plugins: [
-    'graphql',
-  ],
-  globals: {
-    fetch: false,
-  },
   rules: {
-    'import/no-unresolved': 0,
-    'import/extensions': 0,
-    'import/no-extraneous-dependencies': 0,
-
+    'no-use-before-define': 0,
+    // https://github.com/benmosher/eslint-plugin-import
+    'import/no-internal-modules': 0,
+    // https://github.com/yannickcr/eslint-plugin-react
+    'react/prop-types': 0,
+    'react/require-default-props': 0,
     'react/sort-comp': 0,
-    'react/jsx-indent': 0,
+    // https://github.com/Intellicode/eslint-plugin-react-native
+    'react-native/no-color-literals': 0,
   },
 };

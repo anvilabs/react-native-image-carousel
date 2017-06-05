@@ -1,0 +1,13 @@
+{
+  "editor.insertSpaces": true,
+  "editor.rulers": [80],
+  "editor.tabSize": 2,
+
+  "eslint.autoFixOnSave": true,
+
+  "flow.useNPMPackagedFlow": true,
+
+  "javascript.validate.enable": false,
+
+  "vsicons.presets.angular": false
+}
