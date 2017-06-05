@@ -5,6 +5,7 @@
   "homepage": "https://github.com/anvilabs/react-native-image-carousel",
   "main": "src/index.js",
   "scripts": {
+    "typecheck": "flow .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -31,6 +32,7 @@
   "devDependencies": {
     "babel-eslint": "^7.1.1",
     "eslint": "^3.14.1",
-    "eslint-config-anvilabs": "^4.0.0"
+    "eslint-config-anvilabs": "^4.0.0",
+    "flow-bin": "^0.47.0"
   }
 }

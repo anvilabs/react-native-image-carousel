@@ -130,7 +130,7 @@ export default class ImageCarousel extends Component {
     });
   }
 
-  shouldComponentUpdate(nextProps: View.props, nextState: State): boolean {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     return (nextState.fullscreen || this.state.fullscreen) &&
       (!_.eq(nextState.origin, this.state.origin)
       || !_.eq(nextState.target, this.state.target)

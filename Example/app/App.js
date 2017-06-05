@@ -41,7 +41,7 @@ class App extends Component {
     </TouchableWithoutFeedback>
   );
 
-  _renderFooter(): ReactElement<any> {
+  _renderFooter(): React$Element<any> {
     return (
       <Text style={styles.footerText}>Footer!</Text>
     );
@@ -55,7 +55,7 @@ class App extends Component {
     />
   );
 
-  render(): ReactElement<any> {
+  render(): React$Element<any> {
     return (
       <View style={styles.container}>
         <Text>IMAGES</Text>
