@@ -53,7 +53,7 @@
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-preset-react-native": "^2.0.0",
-    "eslint": "^4.0.0",
+    "eslint": "^3.19.0",
     "eslint-config-anvilabs": "^9.1.1",
     "flow-bin": "^0.48.0",
     "flow-coverage-report": "^0.3.0",
