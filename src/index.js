@@ -34,7 +34,6 @@ type PropsType = {
   onClose?: ?() => void,
   horizontal?: ?boolean,
 };
-
 type StateType = {
   origin: {
     x: number,
@@ -47,8 +46,6 @@ type StateType = {
     y: number,
     opacity: number,
   },
-  openAnim: Animated.Value,
-  pan: Animated.Value,
   fullscreen: boolean,
   selectedIdx: number,
   animating: boolean,
@@ -61,6 +58,8 @@ class ImageCarousel extends Component {
   props: PropsType;
   state: StateType;
   panResponder: Object; // eslint-disable-line flowtype/no-weak-types
+  openAnim = new Animated.Value(0);
+  pan = new Animated.Value(0);
   carouselItems: Array<?React$Element<*>> = Array.isArray(this.props.children)
     ? this.props.children.map(() => null)
     : [null];
@@ -77,8 +76,6 @@ class ImageCarousel extends Component {
       y: 0,
       opacity: 1,
     },
-    openAnim: new Animated.Value(0),
-    pan: new Animated.Value(0),
     fullscreen: false,
     selectedIdx: 0,
     animating: false,
@@ -101,11 +98,11 @@ class ImageCarousel extends Component {
       onPanResponderTerminationRequest: () => true,
       // eslint-disable-next-line flowtype/no-weak-types
       onPanResponderMove: (evt: Object, gestureState: Object) => {
-        Animated.event([null, {dy: this.state.pan}])(evt, gestureState);
+        this.pan.setValue(gestureState.dy);
 
         // eslint-disable-next-line no-magic-numbers
         if (Math.abs(gestureState.dy) > 15 && !this.state.panning) {
-          this.state.pan.setValue(0);
+          this.pan.setValue(0);
           this.setState({panning: true});
         }
       },
@@ -114,23 +111,12 @@ class ImageCarousel extends Component {
     });
   }
 
-  shouldComponentUpdate(nextProps: PropsType, nextState: StateType) {
-    return (
-      (nextState.fullscreen || this.state.fullscreen) &&
-      (nextState.origin !== this.state.origin ||
-        nextState.target !== this.state.target ||
-        nextState.panning !== this.state.panning ||
-        nextState.animating !== this.state.animating ||
-        nextState.selectedImageHidden !== this.state.selectedImageHidden ||
-        nextState.selectedIdx !== this.state.selectedIdx)
-    );
-  }
-
   open = (startIdx: number) => {
-    const {hideStatusBarOnOpen, onIdxChange, onOpen} = this.props;
     const activeComponent = this.getComponentAtIdx(startIdx);
 
     if (!activeComponent) return;
+
+    const {hideStatusBarOnOpen, onIdxChange, onOpen} = this.props;
 
     hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
     this.setState({fullscreen: true});
@@ -160,11 +146,11 @@ class ImageCarousel extends Component {
   };
 
   close = () => {
-    const {hideStatusBarOnOpen, onClose} = this.props;
-
     const activeComponent = this.getComponentAtIdx(this.state.selectedIdx);
 
     if (!activeComponent) return;
+
+    const {hideStatusBarOnOpen, onClose} = this.props;
 
     hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
     this.setState({animating: true});
@@ -197,7 +183,7 @@ class ImageCarousel extends Component {
     );
   };
 
-  setCarouselItem = (carouselItem: React$Element<*>, idx: number) => {
+  captureCarouselItem = (carouselItem: React$Element<*>, idx: number) => {
     this.carouselItems[idx] = carouselItem;
   };
 
@@ -219,7 +205,7 @@ class ImageCarousel extends Component {
   };
 
   animateOpenAnimToValue = (toValue: number, onComplete?: ?() => void) =>
-    Animated.timing(this.state.openAnim, {
+    Animated.timing(this.openAnim, {
       ...ANIM_CONFIG,
       toValue,
     }).start(() => {
@@ -242,7 +228,7 @@ class ImageCarousel extends Component {
 
       this.close();
     } else {
-      Animated.timing(this.state.pan, {
+      Animated.timing(this.pan, {
         toValue: 0,
         ...ANIM_CONFIG,
       }).start(() => this.setState({panning: false}));
@@ -250,34 +236,27 @@ class ImageCarousel extends Component {
   };
 
   getSwipeableStyle = (idx: number): ReactNative$StyleType => {
-    const {
-      fullscreen,
-      openAnim,
-      origin,
-      selectedIdx,
-      slidesDown,
-      target,
-    } = this.state;
-
-    const inputRange = [0, 1];
+    const {fullscreen, origin, selectedIdx, slidesDown, target} = this.state;
 
     if (!fullscreen || idx !== selectedIdx) return {flex: 1};
 
+    const inputRange = [0, 1];
+
     return !slidesDown
       ? {
-          left: openAnim.interpolate({
+          left: this.openAnim.interpolate({
             inputRange,
             outputRange: [origin.x, target.x],
           }),
-          top: openAnim.interpolate({
+          top: this.openAnim.interpolate({
             inputRange,
             outputRange: [origin.y, target.y],
           }),
-          width: openAnim.interpolate({
+          width: this.openAnim.interpolate({
             inputRange,
             outputRange: [origin.width, screenWidth],
           }),
-          height: openAnim.interpolate({
+          height: this.openAnim.interpolate({
             inputRange,
             outputRange: [origin.height, screenHeight],
           }),
@@ -286,7 +265,7 @@ class ImageCarousel extends Component {
           left: 0,
           right: 0,
           height: screenHeight,
-          top: openAnim.interpolate({
+          top: this.openAnim.interpolate({
             inputRange,
             outputRange: [screenHeight, target.y],
           }),
@@ -302,10 +281,8 @@ class ImageCarousel extends Component {
   };
 
   handleChangeIdx = (idx: number) => {
-    const {onIdxChange} = this.props;
-
     this.setState({selectedIdx: idx});
-    onIdxChange && onIdxChange(idx);
+    this.props.onIdxChange && this.props.onIdxChange(idx);
   };
 
   renderFullscreenContent = (child: React$Element<*>, idx: number) => {
@@ -315,10 +292,7 @@ class ImageCarousel extends Component {
     const content = renderContent && renderContent(idx);
     const containerStyle = [
       this.getSwipeableStyle(idx),
-      selectedIdx === idx &&
-      panning && {
-        top: this.state.pan,
-      },
+      selectedIdx === idx && panning && {top: this.pan},
     ];
 
     return (
@@ -352,15 +326,15 @@ class ImageCarousel extends Component {
     </TouchableWithoutFeedback>;
 
   getFullscreenOpacity = () => {
-    const {openAnim, pan, panning, target} = this.state;
+    const {panning, target} = this.state;
 
     return {
       opacity: panning
-        ? pan.interpolate({
+        ? this.pan.interpolate({
             inputRange: [-screenHeight, 0, screenHeight],
             outputRange: [0, 1, 0],
           })
-        : openAnim.interpolate({
+        : this.openAnim.interpolate({
             inputRange: [0, 1],
             outputRange: [0, target.opacity],
           }),
@@ -437,7 +411,7 @@ class ImageCarousel extends Component {
             >
               <View
                 ref={(view: React$Element<*>) =>
-                  this.setCarouselItem(view, idx)}
+                  this.captureCarouselItem(view, idx)}
                 style={getOpacity(idx)}
               >
                 {child}
