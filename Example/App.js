@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import ImageCarousel from 'react-native-image-carousel';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const urls = [
   'https://d919ce141ef35c47fc40-b9166a60eccf0f83d2d9c63fa65b9129.ssl.cf5.rackcdn.com/images/67003.max-620x600.jpg',
@@ -19,57 +19,52 @@ const urls = [
 ];
 
 class App extends Component {
-  _imageCarousel: React$Element<any>;
+  imageCarousel: React$Element<*>;
 
   componentWillMount() {
     StatusBar.setBarStyle('light-content');
   }
 
-  _setImageCarousel = (imageCarousel: ImageCarousel) => {
-    this._imageCarousel = imageCarousel;
+  captureImageCarousel = (imageCarousel: React$Element<*>) => {
+    this.imageCarousel = imageCarousel;
   };
 
-  _handleHeaderPress = () => this._imageCarousel.close();
+  handleHeaderPress = () => (this.imageCarousel: $FlowFixMe).close();
 
-  _renderHeader = () => (
-    <TouchableWithoutFeedback onPress={this._handleHeaderPress}>
+  renderHeader = (): React$Element<*> =>
+    <TouchableWithoutFeedback onPress={this.handleHeaderPress}>
       <View>
         <Text style={styles.closeText}>Exit</Text>
       </View>
-    </TouchableWithoutFeedback>
-  );
+    </TouchableWithoutFeedback>;
 
-  _renderFooter(): ReactElement<any> {
-    return (
-      <Text style={styles.footerText}>Footer!</Text>
-    );
-  }
+  renderFooter = (): React$Element<*> =>
+    <Text style={styles.footerText}>Footer!</Text>;
 
-  renderImage = (i: number) => (
+  renderImage = (idx: number) =>
     <Image
       style={StyleSheet.absoluteFill}
       resizeMode="contain"
-      source={{ uri: urls[i] }}
-    />
-  );
+      source={{uri: urls[idx]}}
+    />;
 
-  render(): ReactElement<any> {
+  render() {
     return (
       <View style={styles.container}>
         <Text>IMAGES</Text>
         <View>
           <ImageCarousel
-            ref={this._setImageCarousel}
+            ref={this.captureImageCarousel}
             renderContent={this.renderImage}
           >
-            {urls.map((url: string) => (
+            {urls.map(url =>
               <Image
                 style={styles.image}
                 key={url}
-                source={{ uri: url, width: 200 }}
+                source={{uri: url, width: 200}}
                 resizeMode="contain"
-              />
-            ))}
+              />,
+            )}
           </ImageCarousel>
         </View>
       </View>
