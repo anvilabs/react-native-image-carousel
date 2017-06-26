@@ -130,17 +130,19 @@ class ImageCarousel extends Component {
         x: number,
         y: number,
       ) => {
-        this.setState({
-          fullscreen: true,
-          selectedIdx: startIdx,
-          animating: true,
-          origin: {x, y, width, height},
-          target: {x: 0, y: 0, opacity: 1},
-        });
-
-        onIdxChange && onIdxChange(startIdx);
-
-        this.animateOpenAnimToValue(1, onOpen);
+        this.setState(
+          {
+            fullscreen: true,
+            selectedIdx: startIdx,
+            animating: true,
+            origin: {x, y, width, height},
+            target: {x: 0, y: 0, opacity: 1},
+          },
+          () => {
+            onIdxChange && onIdxChange(startIdx);
+            this.animateOpenAnimToValue(1, onOpen);
+          },
+        );
       },
     );
   };
