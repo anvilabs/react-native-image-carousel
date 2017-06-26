@@ -119,7 +119,6 @@ class ImageCarousel extends Component {
     const {hideStatusBarOnOpen, onIdxChange, onOpen} = this.props;
 
     hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
-    this.setState({fullscreen: true});
 
     (activeComponent: $FlowFixMe).measure(
       // eslint-disable-next-line max-params
@@ -132,6 +131,7 @@ class ImageCarousel extends Component {
         y: number,
       ) => {
         this.setState({
+          fullscreen: true,
           selectedIdx: startIdx,
           animating: true,
           origin: {x, y, width, height},
@@ -192,7 +192,7 @@ class ImageCarousel extends Component {
 
     if (Array.isArray(children)) {
       return children;
-    } else if (children !== null && children !== undefined) {
+    } else if (children) {
       return [children];
     }
 
