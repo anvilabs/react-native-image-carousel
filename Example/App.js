@@ -22,7 +22,7 @@ class App extends Component {
   imageCarousel: React$Element<*>;
 
   componentWillMount() {
-    StatusBar.setBarStyle('light-content');
+    StatusBar.setBarStyle('dark-content');
   }
 
   captureImageCarousel = (imageCarousel: React$Element<*>) => {
