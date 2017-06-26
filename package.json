@@ -16,16 +16,16 @@
     "swipe",
     "slide"
   ],
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=6.0.0"
   },
   "scripts": {
     "typecheck": "flow .",
-    "flow:coverage": "flow-coverage-report -i 'src/**/*.js' -x '**/__tests__/**' -t text -t html -f ./node_modules/.bin/flow",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache --fix .",
     "test": "run-p --silent typecheck lint",
+    "build": "rollup -c",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
     "prepush": "nyr test"
@@ -50,18 +50,25 @@
     "react-native": ">=0.40"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.25.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
     "babel-preset-react-native": "^2.0.0",
     "eslint": "^3.19.0",
     "eslint-config-anvilabs": "^9.1.1",
     "flow-bin": "^0.48.0",
-    "flow-coverage-report": "^0.3.0",
     "husky": "^0.13.4",
     "lint-staged": "^4.0.0",
     "npm-run-all": "^4.0.2",
     "nyr": "^1.1.0",
     "prettier": "^1.4.4",
+    "rollup": "^0.43.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-flow": "^1.1.1",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "validate-commit-msg": "^2.12.2"
   }
 }

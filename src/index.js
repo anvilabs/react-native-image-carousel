@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native'; // eslint-disable-line import/no-unresolved, import/extensions
-import React, {Component} from 'react';
+import React, {Component} from 'react'; // eslint-disable-line import/no-unresolved, import/extensions
 import SwipeableViews from 'react-swipeable-views-native';
 
 const ANIM_CONFIG = {duration: 300};
