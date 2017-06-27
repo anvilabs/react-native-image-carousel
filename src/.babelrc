@@ -1,13 +1,10 @@
 {
   "presets": [
-    ["latest", {
-      "es2015": {
-        "modules": false
-      }
+    ["env", {
+      "modules": false
     }]
   ],
   "plugins": [
-    "external-helpers",
     "transform-react-jsx",
     "transform-class-properties",
     ["transform-object-rest-spread", {
