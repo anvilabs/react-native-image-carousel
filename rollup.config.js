@@ -8,7 +8,32 @@ const config = {
   dest: 'dist/index.js',
   format: 'cjs',
   external: ['react', 'react-native', 'react-swipeable-views-native'],
-  plugins: [flow(), babel({exclude: 'node_modules/**'})],
+  plugins: [
+    flow(),
+    babel({
+      babelrc: false,
+      runtimeHelpers: true,
+      presets: [
+        [
+          'es2015',
+          {
+            modules: false,
+          },
+        ],
+      ],
+      plugins: [
+        'babel-plugin-transform-react-jsx',
+        'babel-plugin-transform-class-properties',
+        [
+          'transform-object-rest-spread',
+          {
+            useBuiltIns: true,
+          },
+        ],
+      ],
+      exclude: 'node_modules/**',
+    }),
+  ],
 };
 
 export default config;
