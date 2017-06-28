@@ -5,6 +5,7 @@ import {
   Dimensions,
   Modal,
   PanResponder,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -16,7 +17,11 @@ import React, {Component} from 'react'; // eslint-disable-line import/no-unresol
 import SwipeableViews from 'react-swipeable-views-native';
 
 const ANIM_CONFIG = {duration: 300};
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+const screenSize = Dimensions.get('window');
+const screenWidth = screenSize.width;
+const screenHeight =
+  screenSize.height -
+  Platform.select({ios: 0, android: StatusBar.currentHeight});
 
 type PropsType = {
   style?: ?ReactNative$StyleType,
@@ -118,7 +123,9 @@ class ImageCarousel extends Component {
 
     const {hideStatusBarOnOpen, onIdxChange, onOpen} = this.props;
 
-    hideStatusBarOnOpen && StatusBar.setHidden(true, 'fade');
+    hideStatusBarOnOpen &&
+      Platform.OS === 'ios' &&
+      StatusBar.setHidden(true, 'fade');
 
     (activeComponent: $FlowFixMe).measure(
       // eslint-disable-next-line max-params
@@ -154,7 +161,9 @@ class ImageCarousel extends Component {
 
     const {hideStatusBarOnOpen, onClose} = this.props;
 
-    hideStatusBarOnOpen && StatusBar.setHidden(false, 'fade');
+    hideStatusBarOnOpen &&
+      Platform.OS === 'ios' &&
+      StatusBar.setHidden(false, 'fade');
     this.setState({animating: true});
 
     (activeComponent: $FlowFixMe).measure(
@@ -240,7 +249,9 @@ class ImageCarousel extends Component {
   getSwipeableStyle = (idx: number): ReactNative$StyleType => {
     const {fullscreen, origin, selectedIdx, slidesDown, target} = this.state;
 
-    if (!fullscreen || idx !== selectedIdx) return {flex: 1};
+    if (!fullscreen || idx !== selectedIdx) {
+      return {flex: 1};
+    }
 
     const inputRange = [0, 1];
 

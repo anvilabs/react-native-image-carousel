@@ -18,10 +18,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*       */
 
 var ANIM_CONFIG = { duration: 300 };
-
-var _Dimensions$get = reactNative.Dimensions.get('window');
-var screenWidth = _Dimensions$get.width;
-var screenHeight = _Dimensions$get.height;
+var screenSize = reactNative.Dimensions.get('window');
+var screenWidth = screenSize.width;
+var screenHeight = screenSize.height - reactNative.Platform.select({ ios: 0, android: reactNative.StatusBar.currentHeight });
 
 var ImageCarousel = function (_Component) {
   _inherits(ImageCarousel, _Component);
@@ -68,7 +67,7 @@ var ImageCarousel = function (_Component) {
           onOpen = _this$props.onOpen;
 
 
-      hideStatusBarOnOpen && reactNative.StatusBar.setHidden(true, 'fade');
+      hideStatusBarOnOpen && reactNative.Platform.OS === 'ios' && reactNative.StatusBar.setHidden(true, 'fade');
 
       activeComponent.measure(
       // eslint-disable-next-line max-params
@@ -94,7 +93,7 @@ var ImageCarousel = function (_Component) {
           onClose = _this$props2.onClose;
 
 
-      hideStatusBarOnOpen && reactNative.StatusBar.setHidden(false, 'fade');
+      hideStatusBarOnOpen && reactNative.Platform.OS === 'ios' && reactNative.StatusBar.setHidden(false, 'fade');
       _this.setState({ animating: true });
 
       activeComponent.measure(
@@ -168,7 +167,9 @@ var ImageCarousel = function (_Component) {
           target = _this$state.target;
 
 
-      if (!fullscreen || idx !== selectedIdx) return { flex: 1 };
+      if (!fullscreen || idx !== selectedIdx) {
+        return { flex: 1 };
+      }
 
       var inputRange = [0, 1];
 
