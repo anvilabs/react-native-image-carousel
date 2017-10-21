@@ -2042,19 +2042,19 @@ pseudomap@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
 
-react-swipeable-views-core@^0.11.1:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/react-swipeable-views-core/-/react-swipeable-views-core-0.11.1.tgz#61d046799f90725bbf91a0eb3abcab805c774cac"
+react-swipeable-views-core@^0.12.8:
+  version "0.12.8"
+  resolved "https://registry.yarnpkg.com/react-swipeable-views-core/-/react-swipeable-views-core-0.12.8.tgz#99460621e5a6da07fb482a25b151905ae7a797a9"
   dependencies:
     babel-runtime "^6.23.0"
     warning "^3.0.0"
 
-react-swipeable-views-native@^0.12.2:
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/react-swipeable-views-native/-/react-swipeable-views-native-0.12.2.tgz#b4b7ae858f585024daeb70103455f81750f1e4a1"
+react-swipeable-views-native@^0.12.8:
+  version "0.12.8"
+  resolved "https://registry.yarnpkg.com/react-swipeable-views-native/-/react-swipeable-views-native-0.12.8.tgz#ca4c253b2652d214e4305c79bb78db67e76971c1"
   dependencies:
     babel-runtime "^6.11.6"
-    react-swipeable-views-core "^0.11.1"
+    react-swipeable-views-core "^0.12.8"
     warning "^3.0.0"
 
 read-pkg-up@^2.0.0:
