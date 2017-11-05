@@ -244,7 +244,15 @@ var ImageCarousel = function (_React$Component) {
         React.createElement(
           reactNative.ScrollView,
           {
-            style: styles.fill,
+            ref: function ref(_ref2) {
+              if (_ref2) {
+                // https://github.com/facebook/react-native/issues/11206
+                // eslint-disable-next-line no-param-reassign
+                _ref2.scrollResponderHandleStartShouldSetResponder = function () {
+                  return true;
+                };
+              }
+            },
             contentContainerStyle: styles.fill,
             maximumZoomScale: zoomEnabled ? 2 : 1 // eslint-disable-line no-magic-numbers
             , alwaysBounceVertical: false
@@ -287,8 +295,8 @@ var ImageCarousel = function (_React$Component) {
           renderFooter = _this$props4.renderFooter;
       var _this$state5 = _this.state,
           animating = _this$state5.animating,
-          fullscreen = _this$state5.fullscreen,
           panning = _this$state5.panning,
+          fullscreen = _this$state5.fullscreen,
           selectedIdx = _this$state5.selectedIdx;
 
 
@@ -309,10 +317,9 @@ var ImageCarousel = function (_React$Component) {
         React.createElement(
           SwipeableViews,
           {
-            style: reactNative.StyleSheet.absoluteFill,
+            disabled: animating || panning,
             index: selectedIdx,
-            onChangeIndex: _this.handleChangeIdx,
-            scrollEnabled: !animating && !panning
+            onChangeIndex: _this.handleChangeIdx
           },
           _this.getChildren().map(_this.renderFullscreenContent)
         ),
@@ -420,8 +427,8 @@ var ImageCarousel = function (_React$Component) {
               React.createElement(
                 reactNative.View,
                 {
-                  ref: function ref(_ref2) {
-                    _this3.captureCarouselItem(_ref2, idx);
+                  ref: function ref(_ref3) {
+                    _this3.captureCarouselItem(_ref3, idx);
                   },
                   style: getOpacity(idx)
                 },
