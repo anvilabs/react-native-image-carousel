@@ -376,7 +376,7 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
 
   renderFullscreen = () => {
     const {renderHeader, renderFooter} = this.props;
-    const {fullscreen, selectedIdx} = this.state;
+    const {animating, panning, fullscreen, selectedIdx} = this.state;
 
     const opacity = this.getFullscreenOpacity();
 
@@ -392,6 +392,7 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
       >
         <Animated.View style={[styles.modalBackground, opacity]} />
         <SwipeableViews
+          disabled={animating || panning}
           index={selectedIdx}
           onChangeIndex={this.handleChangeIdx}
         >
