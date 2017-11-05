@@ -12,9 +12,10 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
-} from 'react-native'; // eslint-disable-line import/no-unresolved, import/extensions
-import React, {Component} from 'react'; // eslint-disable-line import/no-unresolved, import/extensions
+} from 'react-native';
+import * as React from 'react';
 import SwipeableViews from 'react-swipeable-views-native';
+import type {StyleObj} from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 
 const ANIM_CONFIG = {duration: 300};
 const screenSize = Dimensions.get('window');
@@ -23,49 +24,54 @@ const screenHeight =
   screenSize.height -
   Platform.select({ios: 0, android: StatusBar.currentHeight});
 
-type PropsType = {
-  style?: ?ReactNative$StyleType,
-  contentContainerStyle?: ?ReactNative$StyleType,
+type PropsType = {|
+  style?: ?StyleObj,
+  contentContainerStyle?: ?StyleObj,
   activeProps?: ?{[key: string]: mixed},
-  activeComponents?: ?Array<React$Element<*>>,
-  children?: ?Array<React$Element<*>>,
-  zoomEnabled?: ?boolean,
-  hideStatusBarOnOpen?: ?boolean,
-  renderHeader?: ?() => ?React$Element<*>,
-  renderFooter?: ?() => ?React$Element<*>,
-  renderContent?: ?(idx: number) => ?React$Element<*>,
+  activeComponents?: $ReadOnlyArray<React.Element<*>>,
+  children?: React.Element<*> | $ReadOnlyArray<React.Element<*>>,
+  zoomEnabled: boolean,
+  hideStatusBarOnOpen: boolean,
+  renderHeader?: ?() => React.Element<*>,
+  renderFooter?: ?() => React.Element<*>,
+  renderContent?: ?(idx: number) => React.Element<*>,
   onIdxChange?: ?(idx: number) => void,
   onOpen?: ?() => void,
   onClose?: ?() => void,
-  horizontal?: ?boolean,
-};
-type StateType = {
-  origin: {
+  horizontal?: boolean,
+|};
+type StateType = {|
+  origin: {|
     x: number,
     y: number,
     width: number,
     height: number,
-  },
-  target: {
+  |},
+  target: {|
     x: number,
     y: number,
     opacity: number,
-  },
+  |},
   fullscreen: boolean,
   selectedIdx: number,
   animating: boolean,
   panning: boolean,
   selectedImageHidden: boolean,
   slidesDown: boolean,
-};
+|};
 
-class ImageCarousel extends Component {
-  props: PropsType;
-  state: StateType;
+class ImageCarousel extends React.Component<PropsType, StateType> {
+  static defaultProps = {
+    zoomEnabled: true,
+    hideStatusBarOnOpen: true,
+  };
+
   panResponder: Object; // eslint-disable-line flowtype/no-weak-types
   openAnim = new Animated.Value(0);
   pan = new Animated.Value(0);
-  carouselItems: Array<?React$Element<*>> = Array.isArray(this.props.children)
+  carouselItems: $ReadOnlyArray<?React.Element<*>> = Array.isArray(
+    this.props.children,
+  )
     ? this.props.children.map(() => null)
     : [null];
 
@@ -87,11 +93,6 @@ class ImageCarousel extends Component {
     panning: false,
     selectedImageHidden: false,
     slidesDown: false,
-  };
-
-  static defaultProps = {
-    zoomEnabled: true,
-    hideStatusBarOnOpen: true,
   };
 
   componentWillMount() {
@@ -123,9 +124,9 @@ class ImageCarousel extends Component {
 
     const {hideStatusBarOnOpen, onIdxChange, onOpen} = this.props;
 
-    hideStatusBarOnOpen &&
-      Platform.OS === 'ios' &&
+    if (hideStatusBarOnOpen && Platform.OS === 'ios') {
       StatusBar.setHidden(true, 'fade');
+    }
 
     (activeComponent: $FlowFixMe).measure(
       // eslint-disable-next-line max-params
@@ -146,7 +147,10 @@ class ImageCarousel extends Component {
             target: {x: 0, y: 0, opacity: 1},
           },
           () => {
-            onIdxChange && onIdxChange(startIdx);
+            if (onIdxChange) {
+              onIdxChange(startIdx);
+            }
+
             this.animateOpenAnimToValue(1, onOpen);
           },
         );
@@ -161,9 +165,10 @@ class ImageCarousel extends Component {
 
     const {hideStatusBarOnOpen, onClose} = this.props;
 
-    hideStatusBarOnOpen &&
-      Platform.OS === 'ios' &&
+    if (hideStatusBarOnOpen && Platform.OS === 'ios') {
       StatusBar.setHidden(false, 'fade');
+    }
+
     this.setState({animating: true});
 
     (activeComponent: $FlowFixMe).measure(
@@ -188,17 +193,20 @@ class ImageCarousel extends Component {
             slidesDown: false,
           });
 
-          onClose && onClose();
+          if (onClose) {
+            onClose();
+          }
         });
       },
     );
   };
 
-  captureCarouselItem = (carouselItem: React$Element<*>, idx: number) => {
-    this.carouselItems[idx] = carouselItem;
+  captureCarouselItem = (ref: ?React.Component<typeof View>, idx: number) => {
+    // $FlowFixMe
+    this.carouselItems[idx] = ref;
   };
 
-  getChildren = (): Array<React$Element<*>> => {
+  getChildren = (): $ReadOnlyArray<React$Element<*>> => {
     const {children} = this.props;
 
     if (Array.isArray(children)) {
@@ -210,8 +218,9 @@ class ImageCarousel extends Component {
     return [];
   };
 
-  getComponentAtIdx = (idx: number) => {
+  getComponentAtIdx = (idx: number): React.Node => {
     const {activeComponents} = this.props;
+
     return activeComponents ? activeComponents[idx] : this.carouselItems[idx];
   };
 
@@ -221,7 +230,9 @@ class ImageCarousel extends Component {
       toValue,
     }).start(() => {
       this.setState({animating: false});
-      onComplete && onComplete();
+      if (onComplete) {
+        onComplete();
+      }
     });
 
   // eslint-disable-next-line flowtype/no-weak-types
@@ -246,7 +257,7 @@ class ImageCarousel extends Component {
     }
   };
 
-  getSwipeableStyle = (idx: number): ReactNative$StyleType => {
+  getSwipeableStyle = (idx: number): StyleObj => {
     const {fullscreen, origin, selectedIdx, slidesDown, target} = this.state;
 
     if (!fullscreen || idx !== selectedIdx) {
@@ -295,7 +306,9 @@ class ImageCarousel extends Component {
 
   handleChangeIdx = (idx: number) => {
     this.setState({selectedIdx: idx});
-    this.props.onIdxChange && this.props.onIdxChange(idx);
+    if (this.props.onIdxChange) {
+      this.props.onIdxChange(idx);
+    }
   };
 
   renderFullscreenContent = (child: React$Element<*>, idx: number) => {
@@ -331,12 +344,13 @@ class ImageCarousel extends Component {
     );
   };
 
-  renderDefaultHeader = () =>
+  renderDefaultHeader = () => (
     <TouchableWithoutFeedback onPress={this.close}>
       <View>
         <Text style={styles.closeText}>Close</Text>
       </View>
-    </TouchableWithoutFeedback>;
+    </TouchableWithoutFeedback>
+  );
 
   getFullscreenOpacity = () => {
     const {panning, target} = this.state;
@@ -387,10 +401,11 @@ class ImageCarousel extends Component {
               })
             : this.renderDefaultHeader()}
         </Animated.View>
-        {footer &&
+        {footer && (
           <Animated.View style={[opacity, styles.footerContainer]}>
             {footer}
-          </Animated.View>}
+          </Animated.View>
+        )}
       </Modal>
     );
   };
@@ -417,20 +432,21 @@ class ImageCarousel extends Component {
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
         >
-          {this.getChildren().map((child: React$Element<*>, idx: number) =>
+          {this.getChildren().map((child, idx) => (
             <TouchableWithoutFeedback
               key={`slider-image-${idx}`} // eslint-disable-line react/no-array-index-key
               onPress={() => this.open(idx)}
             >
               <View
-                ref={(view: React$Element<*>) =>
-                  this.captureCarouselItem(view, idx)}
+                ref={ref => {
+                  this.captureCarouselItem(ref, idx);
+                }}
                 style={getOpacity(idx)}
               >
                 {child}
               </View>
-            </TouchableWithoutFeedback>,
-          )}
+            </TouchableWithoutFeedback>
+          ))}
         </ScrollView>
         {fullscreen && this.renderFullscreen()}
       </View>

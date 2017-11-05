@@ -31,22 +31,25 @@ class App extends Component {
 
   handleHeaderPress = () => (this.imageCarousel: $FlowFixMe).close();
 
-  renderHeader = (): React$Element<*> =>
+  renderHeader = (): React$Element<*> => (
     <TouchableWithoutFeedback onPress={this.handleHeaderPress}>
       <View>
         <Text style={styles.closeText}>Exit</Text>
       </View>
-    </TouchableWithoutFeedback>;
+    </TouchableWithoutFeedback>
+  );
 
-  renderFooter = (): React$Element<*> =>
-    <Text style={styles.footerText}>Footer!</Text>;
+  renderFooter = (): React$Element<*> => (
+    <Text style={styles.footerText}>Footer!</Text>
+  );
 
-  renderImage = (idx: number) =>
+  renderImage = (idx: number) => (
     <Image
       style={StyleSheet.absoluteFill}
       resizeMode="contain"
       source={{uri: urls[idx]}}
-    />;
+    />
+  );
 
   render() {
     return (
@@ -57,14 +60,14 @@ class App extends Component {
             ref={this.captureImageCarousel}
             renderContent={this.renderImage}
           >
-            {urls.map(url =>
+            {urls.map(url => (
               <Image
                 style={styles.image}
                 key={url}
                 source={{uri: url, width: 200}}
                 resizeMode="contain"
-              />,
-            )}
+              />
+            ))}
           </ImageCarousel>
         </View>
       </View>

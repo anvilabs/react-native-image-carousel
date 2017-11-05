@@ -1,5 +1,5 @@
 module.exports = {
   rules: {
-    'no-undef': 0,
+    'no-undef': 'off',
   },
 };

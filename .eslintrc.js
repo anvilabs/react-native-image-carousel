@@ -1,18 +1,19 @@
 module.exports = {
   extends: [
     'anvilabs',
+    'anvilabs-react/native',
     'anvilabs/flowtype',
-    'anvilabs/react-native',
   ],
   rules: {
-    'no-use-before-define': 0,
+    'no-use-before-define': 'off',
     // https://github.com/benmosher/eslint-plugin-import
-    'import/no-internal-modules': 0,
+    'import/no-internal-modules': 'off',
     // https://github.com/yannickcr/eslint-plugin-react
-    'react/prop-types': 0,
-    'react/require-default-props': 0,
-    'react/sort-comp': 0,
+    'react/prop-types': 'off',
+    'react/require-default-props': 'off',
+    'react/sort-comp': 'off',
     // https://github.com/Intellicode/eslint-plugin-react-native
-    'react-native/no-color-literals': 0,
+    'react-native/no-color-literals': 'off',
+    'react/jsx-filename-extension': 'off',
   },
 };
