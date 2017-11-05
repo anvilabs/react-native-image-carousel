@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import * as React from 'react';
-import SwipeableViews from 'react-swipeable-views-native/lib/SwipeableViews.scroll';
+import SwipeableViews from 'react-swipeable-views-native';
 import type {StyleObj} from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 
 const ANIM_CONFIG = {duration: 300};
@@ -324,7 +324,13 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
     return (
       <Animated.View key={idx} style={containerStyle}>
         <ScrollView
-          style={styles.fill}
+          ref={ref => {
+            if (ref) {
+              // https://github.com/facebook/react-native/issues/11206
+              // eslint-disable-next-line no-param-reassign
+              ref.scrollResponderHandleStartShouldSetResponder = () => true;
+            }
+          }}
           contentContainerStyle={styles.fill}
           maximumZoomScale={zoomEnabled ? 2 : 1} // eslint-disable-line no-magic-numbers
           alwaysBounceVertical={false}
@@ -370,7 +376,7 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
 
   renderFullscreen = () => {
     const {renderHeader, renderFooter} = this.props;
-    const {animating, fullscreen, panning, selectedIdx} = this.state;
+    const {fullscreen, selectedIdx} = this.state;
 
     const opacity = this.getFullscreenOpacity();
 
@@ -386,10 +392,8 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
       >
         <Animated.View style={[styles.modalBackground, opacity]} />
         <SwipeableViews
-          style={StyleSheet.absoluteFill}
           index={selectedIdx}
           onChangeIndex={this.handleChangeIdx}
-          scrollEnabled={!animating && !panning}
         >
           {this.getChildren().map(this.renderFullscreenContent)}
         </SwipeableViews>
