@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import * as React from 'react';
-import SwipeableViews from 'react-swipeable-views-native';
+import SwipeableViews from 'react-swipeable-views-native/lib/SwipeableViews.scroll';
 import type {StyleObj} from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 
 const ANIM_CONFIG = {duration: 300};
