@@ -4,7 +4,6 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var reactNative = require('react-native');
 var React = require('react');
-var React__default = _interopDefault(React);
 var SwipeableViews = _interopDefault(require('react-swipeable-views-native'));
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -22,8 +21,8 @@ var screenSize = reactNative.Dimensions.get('window');
 var screenWidth = screenSize.width;
 var screenHeight = screenSize.height - reactNative.Platform.select({ ios: 0, android: reactNative.StatusBar.currentHeight });
 
-var ImageCarousel = function (_Component) {
-  _inherits(ImageCarousel, _Component);
+var ImageCarousel = function (_React$Component) {
+  _inherits(ImageCarousel, _React$Component);
 
   function ImageCarousel() {
     var _ref;
@@ -67,7 +66,9 @@ var ImageCarousel = function (_Component) {
           onOpen = _this$props.onOpen;
 
 
-      hideStatusBarOnOpen && reactNative.Platform.OS === 'ios' && reactNative.StatusBar.setHidden(true, 'fade');
+      if (hideStatusBarOnOpen && reactNative.Platform.OS === 'ios') {
+        reactNative.StatusBar.setHidden(true, 'fade');
+      }
 
       activeComponent.measure(
       // eslint-disable-next-line max-params
@@ -79,7 +80,10 @@ var ImageCarousel = function (_Component) {
           origin: { x: x, y: y, width: width, height: height },
           target: { x: 0, y: 0, opacity: 1 }
         }, function () {
-          onIdxChange && onIdxChange(startIdx);
+          if (onIdxChange) {
+            onIdxChange(startIdx);
+          }
+
           _this.animateOpenAnimToValue(1, onOpen);
         });
       });
@@ -93,7 +97,10 @@ var ImageCarousel = function (_Component) {
           onClose = _this$props2.onClose;
 
 
-      hideStatusBarOnOpen && reactNative.Platform.OS === 'ios' && reactNative.StatusBar.setHidden(false, 'fade');
+      if (hideStatusBarOnOpen && reactNative.Platform.OS === 'ios') {
+        reactNative.StatusBar.setHidden(false, 'fade');
+      }
+
       _this.setState({ animating: true });
 
       activeComponent.measure(
@@ -111,11 +118,14 @@ var ImageCarousel = function (_Component) {
             slidesDown: false
           });
 
-          onClose && onClose();
+          if (onClose) {
+            onClose();
+          }
         });
       });
-    }, _this.captureCarouselItem = function (carouselItem, idx) {
-      _this.carouselItems[idx] = carouselItem;
+    }, _this.captureCarouselItem = function (ref, idx) {
+      // $FlowFixMe
+      _this.carouselItems[idx] = ref;
     }, _this.getChildren = function () {
       var children = _this.props.children;
 
@@ -130,13 +140,16 @@ var ImageCarousel = function (_Component) {
     }, _this.getComponentAtIdx = function (idx) {
       var activeComponents = _this.props.activeComponents;
 
+
       return activeComponents ? activeComponents[idx] : _this.carouselItems[idx];
     }, _this.animateOpenAnimToValue = function (toValue, onComplete) {
       return reactNative.Animated.timing(_this.openAnim, Object.assign({}, ANIM_CONFIG, {
         toValue: toValue
       })).start(function () {
         _this.setState({ animating: false });
-        onComplete && onComplete();
+        if (onComplete) {
+          onComplete();
+        }
       });
     }, _this.handlePanEnd = function (evt, gestureState) {
       // eslint-disable-next-line no-magic-numbers
@@ -210,7 +223,9 @@ var ImageCarousel = function (_Component) {
       }
     }, _this.handleChangeIdx = function (idx) {
       _this.setState({ selectedIdx: idx });
-      _this.props.onIdxChange && _this.props.onIdxChange(idx);
+      if (_this.props.onIdxChange) {
+        _this.props.onIdxChange(idx);
+      }
     }, _this.renderFullscreenContent = function (child, idx) {
       var _this$props3 = _this.props,
           renderContent = _this$props3.renderContent,
@@ -223,10 +238,10 @@ var ImageCarousel = function (_Component) {
       var content = renderContent && renderContent(idx);
       var containerStyle = [_this.getSwipeableStyle(idx), selectedIdx === idx && panning && { top: _this.pan }];
 
-      return React__default.createElement(
+      return React.createElement(
         reactNative.Animated.View,
         { key: idx, style: containerStyle },
-        React__default.createElement(
+        React.createElement(
           reactNative.ScrollView,
           {
             style: styles.fill,
@@ -234,17 +249,17 @@ var ImageCarousel = function (_Component) {
             maximumZoomScale: zoomEnabled ? 2 : 1 // eslint-disable-line no-magic-numbers
             , alwaysBounceVertical: false
           },
-          content ? React__default.cloneElement(content, Object.assign({}, content.props, _this.panResponder.panHandlers)) : React__default.cloneElement(child, Object.assign({}, child.props, _this.props.activeProps, _this.panResponder.panHandlers))
+          content ? React.cloneElement(content, Object.assign({}, content.props, _this.panResponder.panHandlers)) : React.cloneElement(child, Object.assign({}, child.props, _this.props.activeProps, _this.panResponder.panHandlers))
         )
       );
     }, _this.renderDefaultHeader = function () {
-      return React__default.createElement(
+      return React.createElement(
         reactNative.TouchableWithoutFeedback,
         { onPress: _this.close },
-        React__default.createElement(
+        React.createElement(
           reactNative.View,
           null,
-          React__default.createElement(
+          React.createElement(
             reactNative.Text,
             { style: styles.closeText },
             'Close'
@@ -282,7 +297,7 @@ var ImageCarousel = function (_Component) {
       var header = renderHeader && renderHeader();
       var footer = renderFooter && renderFooter();
 
-      return React__default.createElement(
+      return React.createElement(
         reactNative.Modal,
         {
           transparent: true,
@@ -290,8 +305,8 @@ var ImageCarousel = function (_Component) {
           onShow: _this.handleModalShow,
           onRequestClose: _this.close
         },
-        React__default.createElement(reactNative.Animated.View, { style: [styles.modalBackground, opacity] }),
-        React__default.createElement(
+        React.createElement(reactNative.Animated.View, { style: [styles.modalBackground, opacity] }),
+        React.createElement(
           SwipeableViews,
           {
             style: reactNative.StyleSheet.absoluteFill,
@@ -301,14 +316,14 @@ var ImageCarousel = function (_Component) {
           },
           _this.getChildren().map(_this.renderFullscreenContent)
         ),
-        React__default.createElement(
+        React.createElement(
           reactNative.Animated.View,
           { style: [opacity, styles.headerContainer] },
-          header ? React__default.cloneElement(header, Object.assign({}, header.props, {
+          header ? React.cloneElement(header, Object.assign({}, header.props, {
             style: [header.props.style]
           })) : _this.renderDefaultHeader()
         ),
-        footer && React__default.createElement(
+        footer && React.createElement(
           reactNative.Animated.View,
           { style: [opacity, styles.footerContainer] },
           footer
@@ -381,10 +396,10 @@ var ImageCarousel = function (_Component) {
         };
       };
 
-      return React__default.createElement(
+      return React.createElement(
         reactNative.View,
         { style: style },
-        React__default.createElement(
+        React.createElement(
           reactNative.ScrollView,
           {
             horizontal: horizontal,
@@ -394,7 +409,7 @@ var ImageCarousel = function (_Component) {
             showsHorizontalScrollIndicator: false
           },
           this.getChildren().map(function (child, idx) {
-            return React__default.createElement(
+            return React.createElement(
               reactNative.TouchableWithoutFeedback,
               {
                 key: 'slider-image-' + idx // eslint-disable-line react/no-array-index-key
@@ -402,11 +417,11 @@ var ImageCarousel = function (_Component) {
                   return _this3.open(idx);
                 }
               },
-              React__default.createElement(
+              React.createElement(
                 reactNative.View,
                 {
-                  ref: function ref(view) {
-                    return _this3.captureCarouselItem(view, idx);
+                  ref: function ref(_ref2) {
+                    _this3.captureCarouselItem(_ref2, idx);
                   },
                   style: getOpacity(idx)
                 },
