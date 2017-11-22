@@ -32,8 +32,8 @@ type PropsType = {|
   children?: React.Element<*> | $ReadOnlyArray<React.Element<*>>,
   zoomEnabled: boolean,
   hideStatusBarOnOpen: boolean,
-  renderHeader?: ?() => React.Element<*>,
-  renderFooter?: ?() => React.Element<*>,
+  renderHeader?: ?(idx: number) => React.Element<*>,
+  renderFooter?: ?(idx: number) => React.Element<*>,
   renderContent?: ?(idx: number) => React.Element<*>,
   onIdxChange?: ?(idx: number) => void,
   onOpen?: ?() => void,
@@ -380,8 +380,8 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
 
     const opacity = this.getFullscreenOpacity();
 
-    const header = renderHeader && renderHeader();
-    const footer = renderFooter && renderFooter();
+    const header = renderHeader && renderHeader(selectedIdx);
+    const footer = renderFooter && renderFooter(selectedIdx);
 
     return (
       <Modal

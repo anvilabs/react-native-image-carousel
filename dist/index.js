@@ -302,8 +302,8 @@ var ImageCarousel = function (_React$Component) {
 
       var opacity = _this.getFullscreenOpacity();
 
-      var header = renderHeader && renderHeader();
-      var footer = renderFooter && renderFooter();
+      var header = renderHeader && renderHeader(selectedIdx);
+      var footer = renderFooter && renderFooter(selectedIdx);
 
       return React.createElement(
         reactNative.Modal,
