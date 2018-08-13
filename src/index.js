@@ -416,7 +416,7 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
   };
 
   render() {
-    const {style, horizontal = true, contentContainerStyle} = this.props;
+    const {style, horizontal = true, contentContainerStyle, snapToAlignment, snapToInterval} = this.props;
     const {
       fullscreen,
       animating,
@@ -433,6 +433,8 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
         <ScrollView
           horizontal={horizontal}
           contentContainerStyle={contentContainerStyle}
+          snapToAlignment={snapToAlignment}
+          snapToInterval={snapToInterval}
           scrollEnabled={!animating}
           alwaysBounceHorizontal={false}
           showsHorizontalScrollIndicator={false}
