@@ -39,6 +39,8 @@ type PropsType = {|
   onOpen?: ?() => void,
   onClose?: ?() => void,
   horizontal?: boolean,
+  snapToAlignment?: 'start' | 'center' | 'end',
+  snapToInterval?: number,
 |};
 type StateType = {|
   origin: {|
