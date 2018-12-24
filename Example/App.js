@@ -21,7 +21,7 @@ const urls = [
 class App extends Component {
   imageCarousel: React$Element<*>;
 
-  componentWillMount() {
+  componentDidMount() {
     StatusBar.setBarStyle('dark-content');
   }
 
