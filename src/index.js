@@ -39,6 +39,8 @@ type PropsType = {|
   onOpen?: ?() => void,
   onClose?: ?() => void,
   horizontal?: boolean,
+  snapToAlignment?: 'start' | 'center' | 'end',
+  snapToInterval?: number,
 |};
 type StateType = {|
   origin: {|
@@ -95,7 +97,7 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
     slidesDown: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => !this.state.animating,
       onStartShouldSetPanResponderCapture: () => !this.state.animating,
@@ -416,7 +418,13 @@ class ImageCarousel extends React.Component<PropsType, StateType> {
   };
 
   render() {
-    const {style, horizontal = true, contentContainerStyle, snapToAlignment, snapToInterval} = this.props;
+    const {
+      style,
+      horizontal = true,
+      contentContainerStyle,
+      snapToAlignment,
+      snapToInterval,
+    } = this.props;
     const {
       fullscreen,
       animating,

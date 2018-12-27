@@ -37,7 +37,7 @@
     ]
   },
   "dependencies": {
-    "react-swipeable-views-native": "^0.12.9"
+    "react-swipeable-views-native": "^0.13.2"
   },
   "peerDependencies": {
     "react": "*",

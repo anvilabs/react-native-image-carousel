@@ -19,3 +19,7 @@
 # Flow
 #
 /flow-coverage/
+
+# Webstorm
+#
+.idea/
